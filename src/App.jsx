@@ -1,35 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import { AppProvider } from "@shopify/polaris";
+import "@shopify/polaris/build/esm/styles.css";
+import "./App.css";
+// import Dashboard from "./components/Dashboard";
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
+import Home from "./components/Home";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(true);
+
+  const OpenSidebar = () => {
+    setOpenSidebarToggle(!openSidebarToggle);
+  };
+
+  const toggleTheme = () => {
+    setIsDarkTheme(!isDarkTheme);
+  };
+
+  useEffect(() => {
+    // Apply theme to body
+    if (isDarkTheme) {
+      document.body.classList.remove('light-theme');
+    } else {
+      document.body.classList.add('light-theme');
+    }
+  }, [isDarkTheme]);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <AppProvider i18n={{}}>
+      <div className="grid-container">
+        <Header 
+          OpenSidebar={OpenSidebar} 
+          toggleTheme={toggleTheme}
+          isDarkTheme={isDarkTheme}
+        />
+        <Sidebar
+          openSidebarToggle={openSidebarToggle}
+          OpenSidebar={OpenSidebar}
+        />
+        <Home />
+        {/* <Dashboard /> */}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </AppProvider>
+  );
 }
 
-export default App
+export default App;

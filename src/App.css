@@ -1,42 +1,507 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* Override Polaris styles to maintain dark theme */
+.Polaris-AppProvider {
+  background-color: #1d2634 !important;
+  color: #9e9ea4 !important;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.Polaris-AppProvider * {
+  color: inherit;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Fix header icons in dark mode */
+.header .icon {
+  color: #9e9ea4 !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Fix main container background in dark mode */
+.main-container {
+  background-color: #1d2634 !important;
+}
+
+/* Override Polaris TopBar styles */
+.Polaris-TopBar {
+  background-color: #263043 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.Polaris-TopBar__Contents {
+  background-color: #263043 !important;
+}
+
+.Polaris-TopBar__NavigationIcon {
+  color: #9e9ea4 !important;
+}
+
+/* Override Polaris Card styles to maintain original design */
+.Polaris-Card {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.Polaris-Card__Section {
+  padding: 0 !important;
+}
+
+/* Override Polaris Text styles */
+.Polaris-Text--headingMd,
+.Polaris-Text--headingLg {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Override Polaris Button styles */
+.Polaris-Button--tertiary {
+  color: #9e9ea4 !important;
+  background-color: transparent !important;
+}
+
+.Polaris-Button--tertiary:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Override Polaris Navigation styles */
+.Polaris-Navigation {
+  background-color: #263043 !important;
+  border: none !important;
+}
+
+.Polaris-Navigation__Section {
+  background-color: transparent !important;
+}
+
+.Polaris-Navigation__Item {
+  color: #9e9ea4 !important;
+}
+
+.Polaris-Navigation__Item:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.Polaris-Navigation__Item--selected {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Override Polaris Page styles */
+.Polaris-Page {
+  background-color: #1d2634 !important;
+}
+
+.Polaris-Page__Header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
+/* Fix chart title color */
+.charts-title {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Theme toggle icon */
+.theme-toggle-icon {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.theme-toggle-icon:hover {
+  transform: scale(1.1);
+}
+
+/* Header actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Badge */
+.badge {
+  background-color: #2e7d32;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Card background and text for dark theme */
+.card {
+  background-color: #263043 !important; /* Same as sidebar in dark mode */
+  color: #fff !important; /* White text/icons */
+  box-shadow: 0 1px 3px 0 rgba(23, 24, 24, 0.08),
+    0 1.5px 6px 0 rgba(23, 24, 24, 0.08);
+  border-radius: 8px;
+  border: 1px solid #222b3a;
+  transition: background 0.2s, color 0.2s;
+}
+
+.card h3,
+.card h1,
+.card .card_icon {
+  color: #fff !important;
+}
+
+/* Light theme: keep Polaris style */
+body.light-theme .card {
+  background-color: #f6f6f7 !important;
+  color: #202223 !important;
+  border: 1px solid #e1e3e5;
+}
+body.light-theme .card h3,
+body.light-theme .card h1,
+body.light-theme .card .card_icon {
+  color: #202223 !important;
+}
+
+/* Chart container */
+.chart-container {
+  padding: 20px;
+}
+
+/* Theme support */
+body.light-theme {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+body.light-theme .Polaris-AppProvider {
+  background-color: #ffffff !important;
+  color: #333333 !important;
+}
+
+body.light-theme .Polaris-Text--headingMd,
+body.light-theme .Polaris-Text--headingLg {
+  color: #333333 !important;
+}
+
+body.light-theme .charts-title {
+  color: #333333 !important;
+}
+
+body.light-theme .main-container {
+  color: #333333;
+  background-color: #ffffff !important;
+}
+
+body.light-theme #sidebar {
+  background-color: #f6f6f7 !important;
+}
+
+body.light-theme .sidebar-list-item > a {
+  color: #333333;
+}
+
+body.light-theme .header {
+  background-color: #ffffff !important; /* pure white */
+  color: #202223 !important;
+}
+
+body.light-theme .header .icon {
+  color: #333333 !important;
+}
+
+body.light-theme .Polaris-Navigation {
+  background-color: #f6f6f7 !important;
+}
+
+body.light-theme .Polaris-Navigation__Item {
+  color: #333333 !important;
+}
+
+body.light-theme .Polaris-Navigation__Item:hover {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+body.light-theme .Polaris-Navigation__Item--selected {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-theme .Polaris-TopBar {
+  background-color: #ffffff !important;
+}
+
+body.light-theme .Polaris-Page {
+  background-color: #ffffff !important;
+}
+
+body.light-theme .Polaris-Icon svg {
+  color: #333333 !important;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #1d2634;
+  color: #9e9ea4;
+  font-family: "Montserrat", sans-serif;
+}
+
+.icon {
+  vertical-align: middle;
+  line-height: 1px;
+  font-size: 20px;
+}
+
+.icon_header {
+  vertical-align: middle;
+  line-height: 1px;
+  font-size: 26px;
+}
+
+.icon,
+.icon_header {
+  margin-right: 20px;
+}
+
+.close_icon {
+  color: red;
+  margin-left: 30px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.card_icon {
+  font-size: 25px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 260px 1fr 1fr 1fr;
+  grid-template-rows: 0.2fr 3fr;
+  grid-template-areas:
+    "sidebar header header header"
+    "sidebar main main main";
+  height: 100vh;
+}
+
+/* Header  */
+.header {
+  grid-area: header;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px 0 30px;
+  box-shadow: 0 6px 7px -3px rgba(0, 0, 0, 0.35);
+  background-color: #263043;
+}
+
+.menu-icon {
+  display: none;
+}
+
+/* End Header  */
+
+/* Sidebar  */
+#sidebar {
+  grid-area: sidebar;
+  height: 100%;
+  background-color: #263043;
+  overflow-y: auto;
+  transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+}
+
+.sidebar-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px 0px 30px;
+  margin-bottom: 30px;
+}
+
+.sidebar-title > span {
+  display: none;
+}
+
+.sidebar-brand {
+  margin-top: 15px;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-list {
+  padding: 0;
+  list-style-type: none;
+}
+
+.sidebar-list-item {
+  padding: 20px 20px 20px 20px;
+  font-size: 18px;
+}
+
+.sidebar-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+}
+
+.sidebar-list-item > a {
+  text-decoration: none;
+  color: #9e9ea4;
+}
+
+.sidebar-responsive {
+  display: inline !important;
+  position: absolute;
+  /*
+    we want the z-index of the sidebar higher so that
+    the charts are not showing over the sidebar 
+    on small screens
+  */
+  z-index: 12 !important;
+}
+
+/* End Sidebar  */
+
+/* Main  */
+.main-container {
+  grid-area: main;
+  overflow-y: auto;
+  padding: 20px 20px;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.main-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.main-title h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  color: #fff !important;
+}
+body.light-theme .main-title h3 {
+  color: #202223 !important;
+}
+
+/* Card titles (smaller than main title) */
+.card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Card numbers (slightly larger than card title, but smaller than main title) */
+.card h1 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.main-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 20px;
+  margin: 15px 0;
+}
+
+.Polaris-Icon {
+  width: 32px;
+  height: 32px;
+  margin: 0px;
+}
+
+.Polaris-Icon svg {
+  color: #fff;
 }
 
 .card {
-  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 8px 15px;
+  border-radius: 5px;
 }
 
-.read-the-docs {
-  color: #888;
+.card-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 60px;
+  height: 300px;
+}
+
+.charts-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 60px;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* End Main  */
+
+/* Medium <= 992px */
+
+@media screen and (max-width: 992px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.2fr 3fr;
+    grid-template-areas:
+      "header"
+      "main";
+  }
+
+  #sidebar {
+    display: none;
+  }
+
+  .menu-icon {
+    display: inline;
+  }
+
+  .sidebar-title > span {
+    display: inline;
+  }
+}
+
+/* Small <= 768px */
+
+@media screen and (max-width: 768px) {
+  .main-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 0;
+  }
+
+  .charts {
+    grid-template-columns: 1fr;
+    margin-top: 30px;
+  }
+}
+
+/* Extra Small <= 576px */
+
+@media screen and (max-width: 576px) {
+  .hedaer-left {
+    display: none;
+  }
+}
+
+/* Sidebar brand: white on dark, dark on light */
+.sidebar-brand span {
+  color: #fff !important;
+}
+body.light-theme .sidebar-brand span {
+  color: #202223 !important;
+}
+
+/* Sidebar brand icon: white on dark, dark on light */
+.sidebar-brand .icon_header {
+  color: #fff !important;
+}
+body.light-theme .sidebar-brand .icon_header {
+  color: #202223 !important;
 }

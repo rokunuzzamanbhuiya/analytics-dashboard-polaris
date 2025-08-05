@@ -1,5 +1,5 @@
 {
-  "name": "analytics-dashboard-polaris",
+  "name": "analytics-dashboard-front",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,8 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "@shopify/polaris": "^13.9.5",
+    "@shopify/polaris-icons": "^9.3.1",
+    "axios": "^1.11.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.5.0",
+    "react-is": "^19.1.1",
+    "react-router": "^7.7.1",
+    "recharts": "^3.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
