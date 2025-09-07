@@ -47,7 +47,8 @@
 /* Override Polaris Text styles */
 .Polaris-Text--headingMd,
 .Polaris-Text--headingLg {
-  color: rgba(255, 255, 255, 0.95) !important;
+  color: rgba(41, 41, 41, 0.95) !important;
+  /* color: rgba(255, 255, 255, 0.95) !important; */
 }
 
 /* Override Polaris Button styles */
@@ -126,8 +127,10 @@
 
 /* Card background and text for dark theme */
 .card {
-  background-color: #263043 !important; /* Same as sidebar in dark mode */
-  color: #fff !important; /* White text/icons */
+  background-color: #263043 !important;
+  /* Same as sidebar in dark mode */
+  color: #fff !important;
+  /* White text/icons */
   box-shadow: 0 1px 3px 0 rgba(23, 24, 24, 0.08),
     0 1.5px 6px 0 rgba(23, 24, 24, 0.08);
   border-radius: 8px;
@@ -147,6 +150,7 @@ body.light-theme .card {
   color: #202223 !important;
   border: 1px solid #e1e3e5;
 }
+
 body.light-theme .card h3,
 body.light-theme .card h1,
 body.light-theme .card .card_icon {
@@ -187,12 +191,13 @@ body.light-theme #sidebar {
   background-color: #f6f6f7 !important;
 }
 
-body.light-theme .sidebar-list-item > a {
+body.light-theme .sidebar-list-item>a {
   color: #333333;
 }
 
 body.light-theme .header {
-  background-color: #ffffff !important; /* pure white */
+  background-color: #f6f6f7 !important;
+  /* pure white */
   color: #202223 !important;
 }
 
@@ -310,7 +315,7 @@ body {
   margin-bottom: 30px;
 }
 
-.sidebar-title > span {
+.sidebar-title>span {
   display: none;
 }
 
@@ -337,7 +342,7 @@ body {
   cursor: pointer;
 }
 
-.sidebar-list-item > a {
+.sidebar-list-item>a {
   text-decoration: none;
   color: #9e9ea4;
 }
@@ -376,6 +381,7 @@ body {
   margin: 0;
   color: #fff !important;
 }
+
 body.light-theme .main-title h3 {
   color: #202223 !important;
 }
@@ -462,7 +468,7 @@ body.light-theme .main-title h3 {
     display: inline;
   }
 
-  .sidebar-title > span {
+  .sidebar-title>span {
     display: inline;
   }
 }
@@ -494,6 +500,7 @@ body.light-theme .main-title h3 {
 .sidebar-brand span {
   color: #fff !important;
 }
+
 body.light-theme .sidebar-brand span {
   color: #202223 !important;
 }
@@ -502,6 +509,7 @@ body.light-theme .sidebar-brand span {
 .sidebar-brand .icon_header {
   color: #fff !important;
 }
+
 body.light-theme .sidebar-brand .icon_header {
   color: #202223 !important;
 }

@@ -6,6 +6,8 @@ import "./App.css";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import Home from "./components/Home";
+// import OrderNotifications from "./components/OrderNotifications";
+// import DashboardTables from "./components/DashboardTables";
 
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -22,17 +24,17 @@ function App() {
   useEffect(() => {
     // Apply theme to body
     if (isDarkTheme) {
-      document.body.classList.remove('light-theme');
+      document.body.classList.remove("light-theme");
     } else {
-      document.body.classList.add('light-theme');
+      document.body.classList.add("light-theme");
     }
   }, [isDarkTheme]);
 
   return (
     <AppProvider i18n={{}}>
       <div className="grid-container">
-        <Header 
-          OpenSidebar={OpenSidebar} 
+        <Header
+          OpenSidebar={OpenSidebar}
           toggleTheme={toggleTheme}
           isDarkTheme={isDarkTheme}
         />
@@ -42,6 +44,8 @@ function App() {
         />
         <Home />
         {/* <Dashboard /> */}
+        {/* <OrderNotifications /> */}
+        {/* <DashboardTables /> */}
       </div>
     </AppProvider>
   );

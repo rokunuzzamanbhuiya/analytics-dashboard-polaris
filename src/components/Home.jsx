@@ -14,8 +14,15 @@ import {
   BsPeopleFill,
   BsCurrencyDollar,
 } from "react-icons/bs";
-import { Icon } from '@shopify/polaris';
-import { ProductIcon, OrderIcon, CashDollarIcon, PersonIcon } from '@shopify/polaris-icons';
+import { Icon } from "@shopify/polaris";
+import {
+  ProductIcon,
+  OrderIcon,
+  CashDollarIcon,
+  PersonIcon,
+} from "@shopify/polaris-icons";
+import Dashboard from "./Dashboard";
+import DashboardTables from "./DashboardTables";
 
 function Home() {
   const [orders, setOrders] = useState([]);
@@ -65,7 +72,7 @@ function Home() {
     <main className="main-container">
       <div className="main-title">
         <h3>DASHBOARD</h3>
-        <span className="badge">Live</span>
+        {/* <span className="badge">Live</span> */}
       </div>
 
       <div className="main-cards">
@@ -113,6 +120,7 @@ function Home() {
           </BarChart>
         </ResponsiveContainer>
       </div>
+      <DashboardTables />
     </main>
   );
 }
