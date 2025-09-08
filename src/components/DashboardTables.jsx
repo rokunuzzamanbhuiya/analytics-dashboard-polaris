@@ -1,3 +1,575 @@
+// import React, { useState, useEffect, useCallback } from "react";
+// import axios from "axios";
+// import {
+//   Card,
+//   IndexTable,
+//   Text,
+//   Link,
+//   Thumbnail,
+//   Button,
+//   Modal,
+//   Box,
+//   Spinner,
+// } from "@shopify/polaris";
+
+// const DashboardTables = () => {
+//   // --- State ---
+//   const [bestSelling, setBestSelling] = useState([]);
+//   const [worstSelling, setWorstSelling] = useState([]);
+//   const [pendingOrders, setPendingOrders] = useState([]);
+//   const [lowStock, setLowStock] = useState([]);
+//   const [loading, setLoading] = useState(true);
+
+//   // Modal state
+//   const [activeOrder, setActiveOrder] = useState(null);
+//   const handleOpen = useCallback((order) => setActiveOrder(order), []);
+//   const handleClose = useCallback(() => setActiveOrder(null), []);
+
+//   // --- Fetch data from backend / Shopify ---
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         setLoading(true);
+
+//         const [bestRes, worstRes, ordersRes, stockRes] = await Promise.all([
+//           axios.get("/api/best-selling"),
+//           axios.get("/api/worst-selling"),
+//           axios.get("/api/orders/pending"),
+//           axios.get("/api/products/low-stock"),
+//         ]);
+
+//         setBestSelling(bestRes.data || []);
+//         setWorstSelling(worstRes.data || []);
+//         setPendingOrders(ordersRes.data || []);
+//         setLowStock(stockRes.data || []);
+//       } catch (error) {
+//         console.error("Error fetching dashboard data:", error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchData();
+//   }, []);
+
+//   // --- Table Renderer ---
+//   const renderTable = (title, items, columns, rowRenderer) => {
+//     const safeItems = Array.isArray(items) ? items : [];
+
+//     return (
+//       <Card>
+//         <Box padding="400">
+//           <Text variant="headingMd" as="h2">
+//             {title}
+//           </Text>
+//         </Box>
+//         {loading ? (
+//           <Box padding="400" alignment="center">
+//             <Spinner accessibilityLabel="Loading data" size="large" />
+//           </Box>
+//         ) : safeItems.length === 0 ? (
+//           <Box padding="400">
+//             <Text as="p" tone="subdued">
+//               No data available
+//             </Text>
+//           </Box>
+//         ) : (
+//           <IndexTable
+//             resourceName={{ singular: "item", plural: "items" }}
+//             itemCount={safeItems.length}
+//             selectable={false}
+//             headings={columns}
+//           >
+//             {safeItems.map((item, index) => rowRenderer(item, index))}
+//           </IndexTable>
+//         )}
+//       </Card>
+//     );
+//   };
+
+//   return (
+//     <>
+//       <div style={{ width: "100%", padding: "1rem" }}>
+//         {/* Best Selling */}
+//         {renderTable(
+//           "Best Selling Products",
+//           bestSelling,
+//           [{ title: "Name" }, { title: "Product ID" }, { title: "Actions" }],
+//           (item, index) => (
+//             <IndexTable.Row id={item.id} key={item.id} position={index}>
+//               <IndexTable.Cell>
+//                 <Text>{item.name}</Text>
+//               </IndexTable.Cell>
+//               <IndexTable.Cell>
+//                 <Link
+//                   url={`https://themes-five.myshopify.com/${item.id}`}
+//                   target="_blank"
+//                 >
+//                   {item.id}
+//                 </Link>
+//               </IndexTable.Cell>
+//               <IndexTable.Cell>
+//                 <Button
+//                   url={`https://themes-five.myshopify.com/${item.id}`}
+//                   target="_blank"
+//                   size="slim"
+//                 >
+//                   View
+//                 </Button>
+//               </IndexTable.Cell>
+//             </IndexTable.Row>
+//           )
+//         )}
+
+//         <Box paddingBlock="400" />
+
+//         {/* Worst Selling */}
+//         {renderTable(
+//           "Worst Selling Products",
+//           worstSelling,
+//           [{ title: "Name" }, { title: "Product ID" }, { title: "Actions" }],
+//           (item, index) => (
+//             <IndexTable.Row id={item.id} key={item.id} position={index}>
+//               <IndexTable.Cell>
+//                 <Text>{item.name}</Text>
+//               </IndexTable.Cell>
+//               <IndexTable.Cell>
+//                 <Link
+//                   url={`https://themes-five.myshopify.com/${item.id}`}
+//                   target="_blank"
+//                 >
+//                   {item.id}
+//                 </Link>
+//               </IndexTable.Cell>
+//               <IndexTable.Cell>
+//                 <Button
+//                   url={`https://themes-five.myshopify.com/${item.id}`}
+//                   target="_blank"
+//                   size="slim"
+//                 >
+//                   View
+//                 </Button>
+//               </IndexTable.Cell>
+//             </IndexTable.Row>
+//           )
+//         )}
+
+//         <Box paddingBlock="400" />
+
+//         {/* Pending Orders */}
+//         {renderTable(
+//           "Pending / Unfulfilled Orders",
+//           pendingOrders,
+//           [
+//             { title: "Order ID" },
+//             { title: "Value" },
+//             { title: "Customer" },
+//             { title: "Actions" },
+//           ],
+//           (item, index) => (
+//             <IndexTable.Row id={item.id} key={item.id} position={index}>
+//               <IndexTable.Cell>
+//                 <Link
+//                   url={`https://themes-five.myshopify.com/${item.id}`}
+//                   target="_blank"
+//                 >
+//                   {item.id}
+//                 </Link>
+//               </IndexTable.Cell>
+//               <IndexTable.Cell>
+//                 <Text>{item.value}</Text>
+//               </IndexTable.Cell>
+//               <IndexTable.Cell>
+//                 <Text>{item.customer}</Text>
+//               </IndexTable.Cell>
+//               <IndexTable.Cell>
+//                 <Button size="slim" onClick={() => handleOpen(item)}>
+//                   View
+//                 </Button>
+//               </IndexTable.Cell>
+//             </IndexTable.Row>
+//           )
+//         )}
+
+//         <Box paddingBlock="400" />
+
+//         {/* Low Stock Alerts */}
+//         {renderTable(
+//           "Low Stock Alerts",
+//           lowStock,
+//           [
+//             { title: "Image" },
+//             { title: "Name" },
+//             { title: "Product ID" },
+//             { title: "Stock Qty" },
+//             { title: "Actions" },
+//           ],
+//           (item, index) => (
+//             <IndexTable.Row id={item.id} key={item.id} position={index}>
+//               <IndexTable.Cell>
+//                 <Thumbnail source={item.image} alt={item.name} size="small" />
+//               </IndexTable.Cell>
+//               <IndexTable.Cell>
+//                 <Text>{item.name}</Text>
+//               </IndexTable.Cell>
+//               <IndexTable.Cell>
+//                 <Link
+//                   url={`https://themes-five.myshopify.com/${item.id}`}
+//                   target="_blank"
+//                 >
+//                   {item.id}
+//                 </Link>
+//               </IndexTable.Cell>
+//               <IndexTable.Cell>
+//                 <Text>{item.stock}</Text>
+//               </IndexTable.Cell>
+//               <IndexTable.Cell>
+//                 <Button
+//                   url={`https://themes-five.myshopify.com/${item.id}`}
+//                   target="_blank"
+//                   size="slim"
+//                 >
+//                   View
+//                 </Button>
+//               </IndexTable.Cell>
+//             </IndexTable.Row>
+//           )
+//         )}
+
+//         {/* Modal for order summary */}
+//         {activeOrder && (
+//           <Modal
+//             open={!!activeOrder}
+//             onClose={handleClose}
+//             title={`Order ${activeOrder.id} Summary`}
+//             primaryAction={{
+//               content: "Close",
+//               onAction: handleClose,
+//             }}
+//           >
+//             <Modal.Section>
+//               <Text as="p">Customer: {activeOrder.customer}</Text>
+//               <Text as="p">Value: {activeOrder.value}</Text>
+//               <Text as="p">Summary: {activeOrder.summary}</Text>
+//               <Box paddingBlockStart="400">
+//                 <Button
+//                   url={`https://themes-five.myshopify.com/${activeOrder.id}`}
+//                   target="_blank"
+//                 >
+//                   View in Shopify
+//                 </Button>
+//               </Box>
+//             </Modal.Section>
+//           </Modal>
+//         )}
+//       </div>
+//     </>
+//   );
+// };
+
+// export default DashboardTables;
+
+// ==============================================
+// import React, { useState, useEffect, useCallback } from "react";
+// import {
+//   Card,
+//   IndexTable,
+//   Text,
+//   Link,
+//   Thumbnail,
+//   Button,
+//   Modal,
+//   Box,
+//   Spinner,
+// } from "@shopify/polaris";
+
+// const DashboardTables = () => {
+//   // --- State ---
+//   const [bestSelling, setBestSelling] = useState([]);
+//   const [worstSelling, setWorstSelling] = useState([]);
+//   const [pendingOrders, setPendingOrders] = useState([]);
+//   const [lowStock, setLowStock] = useState([]);
+//   const [loading, setLoading] = useState(true);
+
+//   // Modal state
+//   const [activeOrder, setActiveOrder] = useState(null);
+//   const handleOpen = useCallback((order) => setActiveOrder(order), []);
+//   const handleClose = useCallback(() => setActiveOrder(null), []);
+
+//   // --- Load fake data ---
+//   useEffect(() => {
+//     setLoading(true);
+
+//     setTimeout(() => {
+//       // ✅ Fake Best Selling
+//       setBestSelling([
+//         { id: "P1001", name: "T-Shirt Classic" },
+//         { id: "P1002", name: "Leather Wallet" },
+//         { id: "P1003", name: "Sports Shoes" },
+//       ]);
+
+//       // ✅ Fake Worst Selling
+//       setWorstSelling([
+//         { id: "P2001", name: "Winter Jacket" },
+//         { id: "P2002", name: "Silk Tie" },
+//         { id: "P2003", name: "Wool Hat" },
+//       ]);
+
+//       // ✅ Fake Pending Orders
+//       setPendingOrders([
+//         {
+//           id: "O5001",
+//           value: "$120.00",
+//           customer: "John Doe",
+//           summary: "2x T-Shirt, 1x Wallet",
+//         },
+//         {
+//           id: "O5002",
+//           value: "$250.00",
+//           customer: "Jane Smith",
+//           summary: "1x Jacket, 2x Shoes",
+//         },
+//       ]);
+
+//       // ✅ Fake Low Stock
+//       setLowStock([
+//         {
+//           id: "P3001",
+//           name: "Sunglasses",
+//           stock: 3,
+//           image:
+//             "https://cdn.shopify.com/s/files/1/0680/4150/7113/files/sunglasses.jpg",
+//         },
+//         {
+//           id: "P3002",
+//           name: "Backpack",
+//           stock: 5,
+//           image:
+//             "https://cdn.shopify.com/s/files/1/0680/4150/7113/files/backpack.jpg",
+//         },
+//       ]);
+
+//       setLoading(false);
+//     }, 1000); // simulate API delay
+//   }, []);
+
+//   // --- Table Renderer ---
+//   const renderTable = (title, items, columns, rowRenderer) => {
+//     const safeItems = Array.isArray(items) ? items : [];
+
+//     return (
+//       <Card>
+//         <Box padding="400">
+//           <Text variant="headingMd" as="h2">
+//             {title}
+//           </Text>
+//         </Box>
+//         {loading ? (
+//           <Box padding="400" alignment="center">
+//             <Spinner accessibilityLabel="Loading data" size="large" />
+//           </Box>
+//         ) : safeItems.length === 0 ? (
+//           <Box padding="400">
+//             <Text as="p" tone="subdued">
+//               No data available
+//             </Text>
+//           </Box>
+//         ) : (
+//           <IndexTable
+//             resourceName={{ singular: "item", plural: "items" }}
+//             itemCount={safeItems.length}
+//             selectable={false}
+//             headings={columns}
+//           >
+//             {safeItems.map((item, index) => rowRenderer(item, index))}
+//           </IndexTable>
+//         )}
+//       </Card>
+//     );
+//   };
+
+//   return (
+//     <div style={{ width: "100%", padding: "1rem" }}>
+//       {/* Best Selling */}
+//       {renderTable(
+//         "Best Selling Products",
+//         bestSelling,
+//         [{ title: "Name" }, { title: "Product ID" }, { title: "Actions" }],
+//         (item, index) => (
+//           <IndexTable.Row id={item.id} key={item.id} position={index}>
+//             <IndexTable.Cell>
+//               <Text>{item.name}</Text>
+//             </IndexTable.Cell>
+//             <IndexTable.Cell>
+//               <Link
+//                 url={`https://themes-five.myshopify.com/${item.id}`}
+//                 target="_blank"
+//               >
+//                 {item.id}
+//               </Link>
+//             </IndexTable.Cell>
+//             <IndexTable.Cell>
+//               <Button
+//                 url={`https://themes-five.myshopify.com/${item.id}`}
+//                 target="_blank"
+//                 size="slim"
+//               >
+//                 View
+//               </Button>
+//             </IndexTable.Cell>
+//           </IndexTable.Row>
+//         )
+//       )}
+
+//       <Box paddingBlock="400" />
+
+//       {/* Worst Selling */}
+//       {renderTable(
+//         "Worst Selling Products",
+//         worstSelling,
+//         [{ title: "Name" }, { title: "Product ID" }, { title: "Actions" }],
+//         (item, index) => (
+//           <IndexTable.Row id={item.id} key={item.id} position={index}>
+//             <IndexTable.Cell>
+//               <Text>{item.name}</Text>
+//             </IndexTable.Cell>
+//             <IndexTable.Cell>
+//               <Link
+//                 url={`https://themes-five.myshopify.com/${item.id}`}
+//                 target="_blank"
+//               >
+//                 {item.id}
+//               </Link>
+//             </IndexTable.Cell>
+//             <IndexTable.Cell>
+//               <Button
+//                 url={`https://themes-five.myshopify.com/${item.id}`}
+//                 target="_blank"
+//                 size="slim"
+//               >
+//                 View
+//               </Button>
+//             </IndexTable.Cell>
+//           </IndexTable.Row>
+//         )
+//       )}
+
+//       <Box paddingBlock="400" />
+
+//       {/* Pending Orders */}
+//       {renderTable(
+//         "Pending / Unfulfilled Orders",
+//         pendingOrders,
+//         [
+//           { title: "Order ID" },
+//           { title: "Value" },
+//           { title: "Customer" },
+//           { title: "Actions" },
+//         ],
+//         (item, index) => (
+//           <IndexTable.Row id={item.id} key={item.id} position={index}>
+//             <IndexTable.Cell>
+//               <Link
+//                 url={`https://themes-five.myshopify.com/${item.id}`}
+//                 target="_blank"
+//               >
+//                 {item.id}
+//               </Link>
+//             </IndexTable.Cell>
+//             <IndexTable.Cell>
+//               <Text>{item.value}</Text>
+//             </IndexTable.Cell>
+//             <IndexTable.Cell>
+//               <Text>{item.customer}</Text>
+//             </IndexTable.Cell>
+//             <IndexTable.Cell>
+//               <Button size="slim" onClick={() => handleOpen(item)}>
+//                 View
+//               </Button>
+//             </IndexTable.Cell>
+//           </IndexTable.Row>
+//         )
+//       )}
+
+//       <Box paddingBlock="400" />
+
+//       {/* Low Stock Alerts */}
+//       {renderTable(
+//         "Low Stock Alerts",
+//         lowStock,
+//         [
+//           { title: "Image" },
+//           { title: "Name" },
+//           { title: "Product ID" },
+//           { title: "Stock Qty" },
+//           { title: "Actions" },
+//         ],
+//         (item, index) => (
+//           <IndexTable.Row id={item.id} key={item.id} position={index}>
+//             <IndexTable.Cell>
+//               <Thumbnail source={item.image} alt={item.name} size="small" />
+//             </IndexTable.Cell>
+//             <IndexTable.Cell>
+//               <Text>{item.name}</Text>
+//             </IndexTable.Cell>
+//             <IndexTable.Cell>
+//               <Link
+//                 url={`https://themes-five.myshopify.com/${item.id}`}
+//                 target="_blank"
+//               >
+//                 {item.id}
+//               </Link>
+//             </IndexTable.Cell>
+//             <IndexTable.Cell>
+//               <Text>{item.stock}</Text>
+//             </IndexTable.Cell>
+//             <IndexTable.Cell>
+//               <Button
+//                 url={`https://themes-five.myshopify.com/${item.id}`}
+//                 target="_blank"
+//                 size="slim"
+//               >
+//                 View
+//               </Button>
+//             </IndexTable.Cell>
+//           </IndexTable.Row>
+//         )
+//       )}
+
+//       {/* Modal for order summary */}
+//       {activeOrder && (
+//         <Modal
+//           open={!!activeOrder}
+//           onClose={handleClose}
+//           title={`Order ${activeOrder.id} Summary`}
+//           primaryAction={{
+//             content: "Close",
+//             onAction: handleClose,
+//           }}
+//         >
+//           <Modal.Section>
+//             <Text as="p">Customer: {activeOrder.customer}</Text>
+//             <Text as="p">Value: {activeOrder.value}</Text>
+//             <Text as="p">Summary: {activeOrder.summary}</Text>
+//             <Box paddingBlockStart="400">
+//               <Button
+//                 url={`https://themes-five.myshopify.com/${activeOrder.id}`}
+//                 target="_blank"
+//               >
+//                 View in Shopify
+//               </Button>
+//             </Box>
+//           </Modal.Section>
+//         </Modal>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default DashboardTables;
+
+// ===============================================
+
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import {
@@ -12,30 +584,30 @@ import {
   Spinner,
 } from "@shopify/polaris";
 
+// --- Backend URL ---
+const API_BASE = "https://analytics-dashboard-backend-plum.vercel.app/api";
+
 const DashboardTables = () => {
-  // --- State ---
   const [bestSelling, setBestSelling] = useState([]);
   const [worstSelling, setWorstSelling] = useState([]);
   const [pendingOrders, setPendingOrders] = useState([]);
   const [lowStock, setLowStock] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Modal state
   const [activeOrder, setActiveOrder] = useState(null);
   const handleOpen = useCallback((order) => setActiveOrder(order), []);
   const handleClose = useCallback(() => setActiveOrder(null), []);
 
-  // --- Fetch data from backend / Shopify ---
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
         const [bestRes, worstRes, ordersRes, stockRes] = await Promise.all([
-          axios.get("/api/best-selling"),
-          axios.get("/api/worst-selling"),
-          axios.get("/api/orders/pending"),
-          axios.get("/api/products/low-stock"),
+          axios.get(`${API_BASE}/best-selling`),
+          axios.get(`${API_BASE}/worst-selling`),
+          axios.get(`${API_BASE}/orders/pending`),
+          axios.get(`${API_BASE}/products/low-stock`),
         ]);
 
         setBestSelling(bestRes.data || []);
@@ -52,7 +624,6 @@ const DashboardTables = () => {
     fetchData();
   }, []);
 
-  // --- Table Renderer ---
   const renderTable = (title, items, columns, rowRenderer) => {
     const safeItems = Array.isArray(items) ? items : [];
 
@@ -88,182 +659,180 @@ const DashboardTables = () => {
   };
 
   return (
-    <>
-      <div style={{ width: "100%", padding: "1rem" }}>
-        {/* Best Selling */}
-        {renderTable(
-          "Best Selling Products",
-          bestSelling,
-          [{ title: "Name" }, { title: "Product ID" }, { title: "Actions" }],
-          (item, index) => (
-            <IndexTable.Row id={item.id} key={item.id} position={index}>
-              <IndexTable.Cell>
-                <Text>{item.name}</Text>
-              </IndexTable.Cell>
-              <IndexTable.Cell>
-                <Link
-                  url={`https://admin.shopify.com/products/${item.id}`}
-                  target="_blank"
-                >
-                  {item.id}
-                </Link>
-              </IndexTable.Cell>
-              <IndexTable.Cell>
-                <Button
-                  url={`https://admin.shopify.com/products/${item.id}`}
-                  target="_blank"
-                  size="slim"
-                >
-                  View
-                </Button>
-              </IndexTable.Cell>
-            </IndexTable.Row>
-          )
-        )}
+    <div style={{ width: "100%", padding: "1rem" }}>
+      {/* Best Selling */}
+      {renderTable(
+        "Best Selling Products",
+        bestSelling,
+        [{ title: "Name" }, { title: "Product ID" }, { title: "Actions" }],
+        (item, index) => (
+          <IndexTable.Row id={item.id} key={item.id} position={index}>
+            <IndexTable.Cell>
+              <Text>{item.name}</Text>
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+              <Link
+                url={`https://themes-five.myshopify.com/admin/products/${item.id}`}
+                target="_blank"
+              >
+                {item.id}
+              </Link>
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+              <Button
+                url={`https://themes-five.myshopify.com/products/${item.handle}`}
+                target="_blank"
+                size="slim"
+              >
+                View
+              </Button>
+            </IndexTable.Cell>
+          </IndexTable.Row>
+        )
+      )}
 
-        <Box paddingBlock="400" />
+      <Box paddingBlock="400" />
 
-        {/* Worst Selling */}
-        {renderTable(
-          "Worst Selling Products",
-          worstSelling,
-          [{ title: "Name" }, { title: "Product ID" }, { title: "Actions" }],
-          (item, index) => (
-            <IndexTable.Row id={item.id} key={item.id} position={index}>
-              <IndexTable.Cell>
-                <Text>{item.name}</Text>
-              </IndexTable.Cell>
-              <IndexTable.Cell>
-                <Link
-                  url={`https://admin.shopify.com/products/${item.id}`}
-                  target="_blank"
-                >
-                  {item.id}
-                </Link>
-              </IndexTable.Cell>
-              <IndexTable.Cell>
-                <Button
-                  url={`https://admin.shopify.com/products/${item.id}`}
-                  target="_blank"
-                  size="slim"
-                >
-                  View
-                </Button>
-              </IndexTable.Cell>
-            </IndexTable.Row>
-          )
-        )}
+      {/* Worst Selling */}
+      {renderTable(
+        "Worst Selling Products",
+        worstSelling,
+        [{ title: "Name" }, { title: "Product ID" }, { title: "Actions" }],
+        (item, index) => (
+          <IndexTable.Row id={item.id} key={item.id} position={index}>
+            <IndexTable.Cell>
+              <Text>{item.name}</Text>
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+              <Link
+                url={`https://themes-five.myshopify.com/admin/products/${item.id}`}
+                target="_blank"
+              >
+                {item.id}
+              </Link>
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+              <Button
+                url={`https://themes-five.myshopify.com/products/${item.handle}`}
+                target="_blank"
+                size="slim"
+              >
+                View
+              </Button>
+            </IndexTable.Cell>
+          </IndexTable.Row>
+        )
+      )}
 
-        <Box paddingBlock="400" />
+      <Box paddingBlock="400" />
 
-        {/* Pending Orders */}
-        {renderTable(
-          "Pending / Unfulfilled Orders",
-          pendingOrders,
-          [
-            { title: "Order ID" },
-            { title: "Value" },
-            { title: "Customer" },
-            { title: "Actions" },
-          ],
-          (item, index) => (
-            <IndexTable.Row id={item.id} key={item.id} position={index}>
-              <IndexTable.Cell>
-                <Link
-                  url={`https://admin.shopify.com/orders/${item.id}`}
-                  target="_blank"
-                >
-                  {item.id}
-                </Link>
-              </IndexTable.Cell>
-              <IndexTable.Cell>
-                <Text>{item.value}</Text>
-              </IndexTable.Cell>
-              <IndexTable.Cell>
-                <Text>{item.customer}</Text>
-              </IndexTable.Cell>
-              <IndexTable.Cell>
-                <Button size="slim" onClick={() => handleOpen(item)}>
-                  View
-                </Button>
-              </IndexTable.Cell>
-            </IndexTable.Row>
-          )
-        )}
+      {/* Pending Orders */}
+      {renderTable(
+        "Pending / Unfulfilled Orders",
+        pendingOrders,
+        [
+          { title: "Order ID" },
+          { title: "Value" },
+          { title: "Customer" },
+          { title: "Actions" },
+        ],
+        (item, index) => (
+          <IndexTable.Row id={item.id} key={item.id} position={index}>
+            <IndexTable.Cell>
+              <Link
+                url={`https://themes-five.myshopify.com/admin/orders/${item.id}`}
+                target="_blank"
+              >
+                {item.id}
+              </Link>
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+              <Text>{item.total_price}</Text>
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+              <Text>{item.customer?.name}</Text>
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+              <Button size="slim" onClick={() => handleOpen(item)}>
+                View
+              </Button>
+            </IndexTable.Cell>
+          </IndexTable.Row>
+        )
+      )}
 
-        <Box paddingBlock="400" />
+      <Box paddingBlock="400" />
 
-        {/* Low Stock Alerts */}
-        {renderTable(
-          "Low Stock Alerts",
-          lowStock,
-          [
-            { title: "Image" },
-            { title: "Name" },
-            { title: "Product ID" },
-            { title: "Stock Qty" },
-            { title: "Actions" },
-          ],
-          (item, index) => (
-            <IndexTable.Row id={item.id} key={item.id} position={index}>
-              <IndexTable.Cell>
-                <Thumbnail source={item.image} alt={item.name} size="small" />
-              </IndexTable.Cell>
-              <IndexTable.Cell>
-                <Text>{item.name}</Text>
-              </IndexTable.Cell>
-              <IndexTable.Cell>
-                <Link
-                  url={`https://admin.shopify.com/products/${item.id}`}
-                  target="_blank"
-                >
-                  {item.id}
-                </Link>
-              </IndexTable.Cell>
-              <IndexTable.Cell>
-                <Text>{item.stock}</Text>
-              </IndexTable.Cell>
-              <IndexTable.Cell>
-                <Button
-                  url={`https://admin.shopify.com/products/${item.id}`}
-                  target="_blank"
-                  size="slim"
-                >
-                  View
-                </Button>
-              </IndexTable.Cell>
-            </IndexTable.Row>
-          )
-        )}
+      {/* Low Stock */}
+      {renderTable(
+        "Low Stock Alerts",
+        lowStock,
+        [
+          { title: "Image" },
+          { title: "Name" },
+          { title: "Product ID" },
+          { title: "Stock Qty" },
+          { title: "Actions" },
+        ],
+        (item, index) => (
+          <IndexTable.Row id={item.id} key={item.id} position={index}>
+            <IndexTable.Cell>
+              <Thumbnail source={item.image} alt={item.name} size="small" />
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+              <Text>{item.name}</Text>
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+              <Link
+                url={`https://themes-five.myshopify.com/admin/products/${item.id}`}
+                target="_blank"
+              >
+                {item.id}
+              </Link>
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+              <Text>{item.stock}</Text>
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+              <Button
+                url={`https://themes-five.myshopify.com/products/${item.handle}`}
+                target="_blank"
+                size="slim"
+              >
+                View
+              </Button>
+            </IndexTable.Cell>
+          </IndexTable.Row>
+        )
+      )}
 
-        {/* Modal for order summary */}
-        {activeOrder && (
-          <Modal
-            open={!!activeOrder}
-            onClose={handleClose}
-            title={`Order ${activeOrder.id} Summary`}
-            primaryAction={{
-              content: "Close",
-              onAction: handleClose,
-            }}
-          >
-            <Modal.Section>
-              <Text as="p">Customer: {activeOrder.customer}</Text>
-              <Text as="p">Value: {activeOrder.value}</Text>
-              <Text as="p">Summary: {activeOrder.summary}</Text>
-              <Box paddingBlockStart="400">
-                <Button
-                  url={`https://admin.shopify.com/orders/${activeOrder.id}`}
-                  target="_blank"
-                >
-                  View in Shopify
-                </Button>
-              </Box>
-            </Modal.Section>
-          </Modal>
-        )}
-      </div>
-    </>
+      {/* Order Modal */}
+      {activeOrder && (
+        <Modal
+          open={!!activeOrder}
+          onClose={handleClose}
+          title={`Order ${activeOrder.id} Summary`}
+          primaryAction={{
+            content: "Close",
+            onAction: handleClose,
+          }}
+        >
+          <Modal.Section>
+            <Text as="p">Customer: {activeOrder.customer?.name}</Text>
+            <Text as="p">Value: {activeOrder.total_price}</Text>
+            <Text as="p">Summary: {activeOrder.summary}</Text>
+            <Box paddingBlockStart="400">
+              <Button
+                url={`https://themes-five.myshopify.com/admin/orders/${activeOrder.id}`}
+                target="_blank"
+              >
+                View in Shopify
+              </Button>
+            </Box>
+          </Modal.Section>
+        </Modal>
+      )}
+    </div>
   );
 };
 
