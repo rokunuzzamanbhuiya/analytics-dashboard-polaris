@@ -583,8 +583,9 @@ import {
   Box,
   Spinner,
 } from "@shopify/polaris";
+// import "./DashboardTables.css"; // import CSS file for table overrides
 
-// --- Backend URL ---
+// Backend URL
 const API_BASE = "https://analytics-dashboard-backend-plum.vercel.app/api";
 
 const DashboardTables = () => {
@@ -602,14 +603,12 @@ const DashboardTables = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-
         const [bestRes, worstRes, ordersRes, stockRes] = await Promise.all([
           axios.get(`${API_BASE}/best-selling`),
           axios.get(`${API_BASE}/worst-selling`),
           axios.get(`${API_BASE}/orders/pending`),
           axios.get(`${API_BASE}/products/low-stock`),
         ]);
-
         setBestSelling(bestRes.data || []);
         setWorstSelling(worstRes.data || []);
         setPendingOrders(ordersRes.data || []);
@@ -620,9 +619,11 @@ const DashboardTables = () => {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
+
+  const textStyle = { color: "#000" };
+  const linkStyle = { color: "#000" };
 
   const renderTable = (title, items, columns, rowRenderer) => {
     const safeItems = Array.isArray(items) ? items : [];
@@ -630,7 +631,7 @@ const DashboardTables = () => {
     return (
       <Card>
         <Box padding="400">
-          <Text variant="headingMd" as="h2">
+          <Text variant="headingMd" as="h2" style={textStyle}>
             {title}
           </Text>
         </Box>
@@ -640,26 +641,31 @@ const DashboardTables = () => {
           </Box>
         ) : safeItems.length === 0 ? (
           <Box padding="400">
-            <Text as="p" tone="subdued">
+            <Text as="p" tone="subdued" style={textStyle}>
               No data available
             </Text>
           </Box>
         ) : (
-          <IndexTable
-            resourceName={{ singular: "item", plural: "items" }}
-            itemCount={safeItems.length}
-            selectable={false}
-            headings={columns}
-          >
-            {safeItems.map((item, index) => rowRenderer(item, index))}
-          </IndexTable>
+          <div className="dashboard-table">
+            <IndexTable
+              resourceName={{ singular: "item", plural: "items" }}
+              itemCount={safeItems.length}
+              selectable={false}
+              headings={columns}
+            >
+              {safeItems.map((item, index) => rowRenderer(item, index))}
+            </IndexTable>
+          </div>
         )}
       </Card>
     );
   };
 
   return (
-    <div style={{ width: "100%", padding: "1rem" }}>
+    <div
+      className="dashboard-tables"
+      style={{ width: "100%", padding: "1rem" }}
+    >
       {/* Best Selling */}
       {renderTable(
         "Best Selling Products",
@@ -668,12 +674,13 @@ const DashboardTables = () => {
         (item, index) => (
           <IndexTable.Row id={item.id} key={item.id} position={index}>
             <IndexTable.Cell>
-              <Text>{item.name}</Text>
+              <Text style={textStyle}>{item.name}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Link
                 url={`https://themes-five.myshopify.com/admin/products/${item.id}`}
                 target="_blank"
+                style={linkStyle}
               >
                 {item.id}
               </Link>
@@ -701,12 +708,13 @@ const DashboardTables = () => {
         (item, index) => (
           <IndexTable.Row id={item.id} key={item.id} position={index}>
             <IndexTable.Cell>
-              <Text>{item.name}</Text>
+              <Text style={textStyle}>{item.name}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Link
                 url={`https://themes-five.myshopify.com/admin/products/${item.id}`}
                 target="_blank"
+                style={linkStyle}
               >
                 {item.id}
               </Link>
@@ -742,15 +750,16 @@ const DashboardTables = () => {
               <Link
                 url={`https://themes-five.myshopify.com/admin/orders/${item.id}`}
                 target="_blank"
+                style={linkStyle}
               >
                 {item.id}
               </Link>
             </IndexTable.Cell>
             <IndexTable.Cell>
-              <Text>{item.total_price}</Text>
+              <Text style={textStyle}>{item.total_price}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
-              <Text>{item.customer?.name}</Text>
+              <Text style={textStyle}>{item.customer?.name}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Button size="slim" onClick={() => handleOpen(item)}>
@@ -780,18 +789,19 @@ const DashboardTables = () => {
               <Thumbnail source={item.image} alt={item.name} size="small" />
             </IndexTable.Cell>
             <IndexTable.Cell>
-              <Text>{item.name}</Text>
+              <Text style={textStyle}>{item.name}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Link
                 url={`https://themes-five.myshopify.com/admin/products/${item.id}`}
                 target="_blank"
+                style={linkStyle}
               >
                 {item.id}
               </Link>
             </IndexTable.Cell>
             <IndexTable.Cell>
-              <Text>{item.stock}</Text>
+              <Text style={textStyle}>{item.stock}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Button
@@ -818,9 +828,11 @@ const DashboardTables = () => {
           }}
         >
           <Modal.Section>
-            <Text as="p">Customer: {activeOrder.customer?.name}</Text>
-            <Text as="p">Value: {activeOrder.total_price}</Text>
-            <Text as="p">Summary: {activeOrder.summary}</Text>
+            <Text style={textStyle}>
+              Customer: {activeOrder.customer?.name}
+            </Text>
+            <Text style={textStyle}>Value: {activeOrder.total_price}</Text>
+            <Text style={textStyle}>Summary: {activeOrder.summary}</Text>
             <Box paddingBlockStart="400">
               <Button
                 url={`https://themes-five.myshopify.com/admin/orders/${activeOrder.id}`}

@@ -513,3 +513,10 @@ body.light-theme .sidebar-brand span {
 body.light-theme .sidebar-brand .icon_header {
   color: #202223 !important;
 }
+
+/* Force all IndexTable header and cell text to black */
+.dashboard-tables .Polaris-IndexTable__Table th,
+.dashboard-tables .Polaris-IndexTable__Table td,
+.dashboard-tables .Polaris-IndexTable__Table td .Polaris-Text {
+  color: #2a2a2a !important;
+}
