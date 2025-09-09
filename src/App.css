@@ -13,6 +13,12 @@
   color: #9e9ea4 !important;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
 /* Fix main container background in dark mode */
 .main-container {
   background-color: #1d2634 !important;

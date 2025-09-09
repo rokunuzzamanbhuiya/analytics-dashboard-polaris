@@ -23,6 +23,7 @@ import {
 } from "@shopify/polaris-icons";
 import Dashboard from "./Dashboard";
 import DashboardTables from "./DashboardTables";
+// import OrderNotifications from "./OrderNotifications";
 
 function Home() {
   const [orders, setOrders] = useState([]);
@@ -121,6 +122,7 @@ function Home() {
         </ResponsiveContainer>
       </div>
       <DashboardTables />
+      {/* <OrderNotifications /> */}
     </main>
   );
 }
