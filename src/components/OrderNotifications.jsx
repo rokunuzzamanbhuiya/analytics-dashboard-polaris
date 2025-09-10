@@ -113,25 +113,35 @@ import {
   InlineStack,
 } from "@shopify/polaris";
 
-const OrderNotifications = ({ notifications, setNotifications }) => {
-  // Mark as read
+const OrderNotifications = ({ notifications, setNotifications, onMarkAsRead, onArchive }) => {
+  // Mark as read - use the handler from parent
   const handleMarkAsRead = (id) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
+    if (onMarkAsRead) {
+      onMarkAsRead(id);
+    } else {
+      // Fallback to local state update
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      );
+    }
   };
 
-  // Archive
+  // Archive - use the handler from parent
   const handleArchive = (id) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, archived: true } : n))
-    );
+    if (onArchive) {
+      onArchive(id);
+    } else {
+      // Fallback to local state update
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, archived: true } : n))
+      );
+    }
   };
 
-  // Unread count
-  const unreadCount = notifications.filter(
-    (n) => !n.read && !n.archived
-  ).length;
+  // Unread count - with extra safety checks
+  const unreadCount = Array.isArray(notifications) 
+    ? notifications.filter((n) => !n.read && !n.archived).length 
+    : 0;
 
   return (
     <Card>
@@ -146,18 +156,66 @@ const OrderNotifications = ({ notifications, setNotifications }) => {
 
       <ResourceList
         resourceName={{ singular: "notification", plural: "notifications" }}
-        items={notifications.filter((n) => !n.archived)}
+        items={Array.isArray(notifications) ? notifications.filter((n) => !n.archived) : []}
         renderItem={(item) => {
-          const { id, orderId, customer, read } = item;
+          const { 
+            id, 
+            orderId, 
+            customer, 
+            read, 
+            orderValue, 
+            currency, 
+            type, 
+            priority, 
+            status, 
+            financialStatus,
+            createdAt 
+          } = item;
+          
+          const getBadgeTone = (type) => {
+            switch (type) {
+              case 'high-value': return 'success';
+              case 'pending-fulfillment': return 'warning';
+              case 'payment-pending': return 'attention';
+              case 'refunded': return 'critical';
+              default: return 'info';
+            }
+          };
+
+          const getPriorityColor = (priority) => {
+            switch (priority) {
+              case 'high': return '#d82c0d';
+              case 'medium': return '#f49342';
+              default: return '#6d7175';
+            }
+          };
+
           return (
             <ResourceItem id={id}>
               <Box paddingBlock="200">
-                <InlineStack align="space-between" blockAlign="center">
-                  <InlineStack gap="200" blockAlign="center">
-                    <Text as="span" fontWeight={read ? "regular" : "bold"}>
-                      {orderId} - {customer}
-                    </Text>
-                    {!read && <Badge tone="attention">New</Badge>}
+                <InlineStack align="space-between" blockAlign="start">
+                  <InlineStack gap="200" blockAlign="start" direction="column">
+                    <InlineStack gap="200" blockAlign="center">
+                      <Text as="span" fontWeight={read ? "regular" : "bold"}>
+                        {orderId} - {customer}
+                      </Text>
+                      {!read && <Badge tone="attention">New</Badge>}
+                      <Badge tone={getBadgeTone(type)}>
+                        {type.replace('-', ' ').toUpperCase()}
+                      </Badge>
+                    </InlineStack>
+                    
+                    <InlineStack gap="200" blockAlign="center">
+                      <Text as="span" variant="bodySm" tone="subdued">
+                        {currency} {orderValue.toFixed(2)}
+                      </Text>
+                      <Text as="span" variant="bodySm" tone="subdued">
+                        • {financialStatus} / {status}
+                      </Text>
+                      <Text as="span" variant="bodySm" tone="subdued">
+                        • {new Date(createdAt).toLocaleString()}
+                      </Text>
+                    </InlineStack>
                   </InlineStack>
 
                   <InlineStack gap="200">
