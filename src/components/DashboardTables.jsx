@@ -571,7 +571,6 @@
 // ===============================================
 
 import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
 import {
   Card,
   IndexTable,
@@ -583,10 +582,13 @@ import {
   Box,
   Spinner,
 } from "@shopify/polaris";
+import {
+  getBestSelling,
+  getWorstSelling,
+  getPendingOrders,
+  getLowStockProducts,
+} from "../api/shopify";
 // import "./DashboardTables.css"; // import CSS file for table overrides
-
-// Backend URL
-const API_BASE = "https://analytics-dashboard-backend-plum.vercel.app/api";
 
 const DashboardTables = () => {
   const [bestSelling, setBestSelling] = useState([]);
@@ -603,18 +605,31 @@ const DashboardTables = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        console.log("🔄 Fetching dashboard data...");
+        
         const [bestRes, worstRes, ordersRes, stockRes] = await Promise.all([
-          axios.get(`${API_BASE}/best-selling`),
-          axios.get(`${API_BASE}/worst-selling`),
-          axios.get(`${API_BASE}/orders/pending`),
-          axios.get(`${API_BASE}/products/low-stock`),
+          getBestSelling(),
+          getWorstSelling(),
+          getPendingOrders(),
+          getLowStockProducts(),
         ]);
+        
+        console.log("📊 API Responses:", {
+          bestSelling: bestRes.data,
+          worstSelling: worstRes.data,
+          pendingOrders: ordersRes.data,
+          lowStock: stockRes.data
+        });
+        
         setBestSelling(bestRes.data || []);
         setWorstSelling(worstRes.data || []);
         setPendingOrders(ordersRes.data || []);
         setLowStock(stockRes.data || []);
+        
+        console.log("✅ Data set successfully");
       } catch (error) {
-        console.error("Error fetching dashboard data:", error);
+        console.error("❌ Error fetching dashboard data:", error);
+        console.error("Error details:", error.response?.data || error.message);
       } finally {
         setLoading(false);
       }
@@ -672,13 +687,13 @@ const DashboardTables = () => {
         bestSelling,
         [{ title: "Name" }, { title: "Product ID" }, { title: "Actions" }],
         (item, index) => (
-          <IndexTable.Row id={item.id} key={item.id} position={index}>
+          <IndexTable.Row id={item.id} key={`${item.id}-${index}`} position={index}>
             <IndexTable.Cell>
               <Text style={textStyle}>{item.name}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Link
-                url={`https://themes-five.myshopify.com/admin/products/${item.id}`}
+                url={item.admin_url}
                 target="_blank"
                 style={linkStyle}
               >
@@ -687,7 +702,7 @@ const DashboardTables = () => {
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Button
-                url={`https://themes-five.myshopify.com/products/${item.handle}`}
+                url={item.public_url}
                 target="_blank"
                 size="slim"
               >
@@ -706,13 +721,13 @@ const DashboardTables = () => {
         worstSelling,
         [{ title: "Name" }, { title: "Product ID" }, { title: "Actions" }],
         (item, index) => (
-          <IndexTable.Row id={item.id} key={item.id} position={index}>
+          <IndexTable.Row id={item.id} key={`${item.id}-${index}`} position={index}>
             <IndexTable.Cell>
               <Text style={textStyle}>{item.name}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Link
-                url={`https://themes-five.myshopify.com/admin/products/${item.id}`}
+                url={item.admin_url}
                 target="_blank"
                 style={linkStyle}
               >
@@ -721,7 +736,7 @@ const DashboardTables = () => {
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Button
-                url={`https://themes-five.myshopify.com/products/${item.handle}`}
+                url={item.public_url}
                 target="_blank"
                 size="slim"
               >
@@ -741,22 +756,24 @@ const DashboardTables = () => {
         [
           { title: "Order ID" },
           { title: "Value" },
-          { title: "Customer" },
+          { title: "Customer Name" },
           { title: "Actions" },
         ],
         (item, index) => (
-          <IndexTable.Row id={item.id} key={item.id} position={index}>
+          <IndexTable.Row id={item.id} key={`${item.id}-${index}`} position={index}>
             <IndexTable.Cell>
               <Link
-                url={`https://themes-five.myshopify.com/admin/orders/${item.id}`}
+                url={item.admin_url}
                 target="_blank"
                 style={linkStyle}
               >
-                {item.id}
+                {item.order_number || item.name}
               </Link>
             </IndexTable.Cell>
             <IndexTable.Cell>
-              <Text style={textStyle}>{item.total_price}</Text>
+              <Text style={textStyle}>
+                {item.currency} {item.total_price}
+              </Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Text style={textStyle}>{item.customer?.name}</Text>
@@ -784,20 +801,36 @@ const DashboardTables = () => {
           { title: "Actions" },
         ],
         (item, index) => (
-          <IndexTable.Row id={item.id} key={item.id} position={index}>
+          <IndexTable.Row id={item.id} key={`${item.id}-${index}`} position={index}>
             <IndexTable.Cell>
-              <Thumbnail source={item.image} alt={item.name} size="small" />
+              {item.image ? (
+                <Thumbnail source={item.image} alt={item.name} size="small" />
+              ) : (
+                <div style={{ 
+                  width: 40, 
+                  height: 40, 
+                  backgroundColor: '#f6f6f7', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  color: '#6d7175'
+                }}>
+                  No Image
+                </div>
+              )}
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Text style={textStyle}>{item.name}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Link
-                url={`https://themes-five.myshopify.com/admin/products/${item.id}`}
+                url={item.admin_url}
                 target="_blank"
                 style={linkStyle}
               >
-                {item.id}
+                {item.product_id}
               </Link>
             </IndexTable.Cell>
             <IndexTable.Cell>
@@ -805,7 +838,7 @@ const DashboardTables = () => {
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Button
-                url={`https://themes-five.myshopify.com/products/${item.handle}`}
+                url={item.public_url}
                 target="_blank"
                 size="slim"
               >
@@ -821,24 +854,92 @@ const DashboardTables = () => {
         <Modal
           open={!!activeOrder}
           onClose={handleClose}
-          title={`Order ${activeOrder.id} Summary`}
+          title={`Order ${activeOrder.order_number || activeOrder.name} Summary`}
           primaryAction={{
             content: "Close",
             onAction: handleClose,
           }}
         >
           <Modal.Section>
-            <Text style={textStyle}>
-              Customer: {activeOrder.customer?.name}
+            <Text style={textStyle} variant="headingMd">
+              Order Details
             </Text>
-            <Text style={textStyle}>Value: {activeOrder.total_price}</Text>
-            <Text style={textStyle}>Summary: {activeOrder.summary}</Text>
+            <Box paddingBlockStart="200">
+              <Text style={textStyle}>
+                <strong>Order Number:</strong> {activeOrder.order_number || activeOrder.name}
+              </Text>
+              <Text style={textStyle}>
+                <strong>Order ID:</strong> {activeOrder.id}
+              </Text>
+              <Text style={textStyle}>
+                <strong>Total Value:</strong> {activeOrder.currency} {activeOrder.total_price}
+              </Text>
+              <Text style={textStyle}>
+                <strong>Status:</strong> {activeOrder.fulfillment_status} / {activeOrder.financial_status}
+              </Text>
+              <Text style={textStyle}>
+                <strong>Created:</strong> {new Date(activeOrder.created_at).toLocaleDateString()}
+              </Text>
+            </Box>
+            
+            <Box paddingBlockStart="400">
+              <Text style={textStyle} variant="headingMd">
+                Customer Information
+              </Text>
+              <Box paddingBlockStart="200">
+                <Text style={textStyle}>
+                  <strong>Name:</strong> {activeOrder.customer?.name}
+                </Text>
+                {activeOrder.customer?.email && (
+                  <Text style={textStyle}>
+                    <strong>Email:</strong> {activeOrder.customer.email}
+                  </Text>
+                )}
+                {activeOrder.customer?.phone && (
+                  <Text style={textStyle}>
+                    <strong>Phone:</strong> {activeOrder.customer.phone}
+                  </Text>
+                )}
+              </Box>
+            </Box>
+
+            {activeOrder.shipping_address && (
+              <Box paddingBlockStart="400">
+                <Text style={textStyle} variant="headingMd">
+                  Shipping Address
+                </Text>
+                <Box paddingBlockStart="200">
+                  <Text style={textStyle}>
+                    {activeOrder.shipping_address.name}
+                  </Text>
+                  <Text style={textStyle}>
+                    {activeOrder.shipping_address.address1}
+                  </Text>
+                  <Text style={textStyle}>
+                    {activeOrder.shipping_address.city}, {activeOrder.shipping_address.province} {activeOrder.shipping_address.zip}
+                  </Text>
+                  <Text style={textStyle}>
+                    {activeOrder.shipping_address.country}
+                  </Text>
+                </Box>
+              </Box>
+            )}
+
+            <Box paddingBlockStart="400">
+              <Text style={textStyle} variant="headingMd">
+                Order Items
+              </Text>
+              <Box paddingBlockStart="200">
+                <Text style={textStyle}>{activeOrder.summary}</Text>
+              </Box>
+            </Box>
+
             <Box paddingBlockStart="400">
               <Button
-                url={`https://themes-five.myshopify.com/admin/orders/${activeOrder.id}`}
+                url={activeOrder.admin_url}
                 target="_blank"
               >
-                View in Shopify
+                View in Shopify Admin
               </Button>
             </Box>
           </Modal.Section>
