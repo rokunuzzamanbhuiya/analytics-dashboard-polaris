@@ -197,7 +197,7 @@ body.light-theme #sidebar {
   background-color: #f6f6f7 !important;
 }
 
-body.light-theme .sidebar-list-item>a {
+body.light-theme .sidebar-list-item > a {
   color: #333333;
 }
 
@@ -321,7 +321,7 @@ body {
   margin-bottom: 30px;
 }
 
-.sidebar-title>span {
+.sidebar-title > span {
   display: none;
 }
 
@@ -348,7 +348,7 @@ body {
   cursor: pointer;
 }
 
-.sidebar-list-item>a {
+.sidebar-list-item > a {
   text-decoration: none;
   color: #9e9ea4;
 }
@@ -474,7 +474,7 @@ body.light-theme .main-title h3 {
     display: inline;
   }
 
-  .sidebar-title>span {
+  .sidebar-title > span {
     display: inline;
   }
 }
@@ -520,9 +520,147 @@ body.light-theme .sidebar-brand .icon_header {
   color: #202223 !important;
 }
 
-/* Force all IndexTable header and cell text to black */
-.dashboard-tables .Polaris-IndexTable__Table th,
-.dashboard-tables .Polaris-IndexTable__Table td,
-.dashboard-tables .Polaris-IndexTable__Table td .Polaris-Text {
-  color: #2a2a2a !important;
+/* Dashboard Tables - Standard Polaris Styling */
+.dashboard-tables {
+  width: 100%;
+}
+
+/* Override Card background for dark theme */
+.dashboard-tables .Polaris-Card,
+.dashboard-tables .Polaris-Card__Section,
+.dashboard-tables .Polaris-Card__Section--subdued,
+.dashboard-table-card {
+  background-color: #263043 !important;
+  border: 1px solid #222b3a !important;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(23, 24, 24, 0.08),
+    0 1.5px 6px 0 rgba(23, 24, 24, 0.08) !important;
+}
+
+body.light-theme .dashboard-tables .Polaris-Card,
+body.light-theme .dashboard-tables .Polaris-Card__Section,
+body.light-theme .dashboard-tables .Polaris-Card__Section--subdued,
+body.light-theme .dashboard-table-card {
+  background-color: #f6f6f7 !important;
+  border: 1px solid #e1e3e5 !important;
+}
+
+/* Dark mode for table content */
+.dashboard-tables .Polaris-IndexTable__Table,
+.dashboard-tables .Polaris-IndexTable__TableHead,
+.dashboard-tables .Polaris-IndexTable__TableBody,
+.dashboard-tables .Polaris-IndexTable__TableRow,
+.dashboard-tables .Polaris-IndexTable__TableCell,
+.dashboard-tables .Polaris-IndexTable__TableHeading {
+  background-color: #263043 !important;
+  color: #fff !important;
+  border-color: #222b3a !important;
+}
+
+.dashboard-tables .Polaris-IndexTable__TableHeading {
+  background-color: #1d2634 !important;
+  color: #fff !important;
+}
+
+.dashboard-tables .Polaris-IndexTable__TableRow:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dashboard-tables .Polaris-Text--root,
+.dashboard-tables .Polaris-Text--bodySm,
+.dashboard-tables .Polaris-Text--bodyMd,
+.dashboard-tables .Polaris-Text--headingMd {
+  color: #fff !important;
+}
+
+.dashboard-tables .Polaris-Link {
+  color: #9e9ea4 !important;
+}
+
+.dashboard-tables .Polaris-Link:hover {
+  color: #fff !important;
+}
+
+/* Light mode for table content */
+body.light-theme .dashboard-tables .Polaris-IndexTable__Table,
+body.light-theme .dashboard-tables .Polaris-IndexTable__TableHead,
+body.light-theme .dashboard-tables .Polaris-IndexTable__TableBody,
+body.light-theme .dashboard-tables .Polaris-IndexTable__TableRow,
+body.light-theme .dashboard-tables .Polaris-IndexTable__TableCell,
+body.light-theme .dashboard-tables .Polaris-IndexTable__TableHeading {
+  background-color: #f6f6f7 !important;
+  color: #202223 !important;
+  border-color: #e1e3e5 !important;
+}
+
+body.light-theme .dashboard-tables .Polaris-IndexTable__TableHeading {
+  background-color: #ffffff !important;
+  color: #202223 !important;
+}
+
+body.light-theme .dashboard-tables .Polaris-IndexTable__TableRow:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-theme .dashboard-tables .Polaris-Text--root,
+body.light-theme .dashboard-tables .Polaris-Text--bodySm,
+body.light-theme .dashboard-tables .Polaris-Text--bodyMd,
+body.light-theme .dashboard-tables .Polaris-Text--headingMd {
+  color: #202223 !important;
+}
+
+body.light-theme .dashboard-tables .Polaris-Link {
+  color: #0066cc !important;
+}
+
+body.light-theme .dashboard-tables .Polaris-Link:hover {
+  color: #004499 !important;
+}
+
+/* Dark mode for buttons - Polaris style */
+.dashboard-tables .Polaris-Button {
+  background-color: #008060 !important;
+  color: #fff !important;
+  border: 1px solid #008060 !important;
+}
+
+.dashboard-tables .Polaris-Button:hover {
+  background-color: #006b52 !important;
+  color: #fff !important;
+  border: 1px solid #006b52 !important;
+}
+
+.dashboard-tables .Polaris-Button--variantSecondary {
+  background-color: transparent !important;
+  color: #9e9ea4 !important;
+  border: 1px solid #6d7175 !important;
+}
+
+.dashboard-tables .Polaris-Button--variantSecondary:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  border: 1px solid #9e9ea4 !important;
+}
+
+/* Light mode for buttons */
+body.light-theme .dashboard-tables .Polaris-Button {
+  background-color: #f6f6f7 !important;
+  color: #202223 !important;
+  border: 1px solid #e1e3e5 !important;
+}
+
+body.light-theme .dashboard-tables .Polaris-Button:hover {
+  background-color: #e1e3e5 !important;
+  color: #202223 !important;
+}
+
+body.light-theme .dashboard-tables .Polaris-Button--variantSecondary {
+  background-color: #f6f6f7 !important;
+  color: #202223 !important;
+  border: 1px solid #e1e3e5 !important;
+}
+
+body.light-theme .dashboard-tables .Polaris-Button--variantSecondary:hover {
+  background-color: #e1e3e5 !important;
+  color: #202223 !important;
 }

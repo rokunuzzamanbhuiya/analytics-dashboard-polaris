@@ -637,16 +637,14 @@ const DashboardTables = () => {
     fetchData();
   }, []);
 
-  const textStyle = { color: "#000" };
-  const linkStyle = { color: "#000" };
 
   const renderTable = (title, items, columns, rowRenderer) => {
     const safeItems = Array.isArray(items) ? items : [];
 
     return (
-      <Card>
+      <div className="dashboard-table-card">
         <Box padding="400">
-          <Text variant="headingMd" as="h2" style={textStyle}>
+          <Text variant="headingMd" as="h2">
             {title}
           </Text>
         </Box>
@@ -656,7 +654,7 @@ const DashboardTables = () => {
           </Box>
         ) : safeItems.length === 0 ? (
           <Box padding="400">
-            <Text as="p" tone="subdued" style={textStyle}>
+            <Text as="p" tone="subdued">
               No data available
             </Text>
           </Box>
@@ -672,7 +670,7 @@ const DashboardTables = () => {
             </IndexTable>
           </div>
         )}
-      </Card>
+      </div>
     );
   };
 
@@ -689,13 +687,12 @@ const DashboardTables = () => {
         (item, index) => (
           <IndexTable.Row id={item.id} key={`${item.id}-${index}`} position={index}>
             <IndexTable.Cell>
-              <Text style={textStyle}>{item.name}</Text>
+              <Text>{item.name}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Link
                 url={item.admin_url}
                 target="_blank"
-                style={linkStyle}
               >
                 {item.id}
               </Link>
@@ -723,13 +720,12 @@ const DashboardTables = () => {
         (item, index) => (
           <IndexTable.Row id={item.id} key={`${item.id}-${index}`} position={index}>
             <IndexTable.Cell>
-              <Text style={textStyle}>{item.name}</Text>
+              <Text>{item.name}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Link
                 url={item.admin_url}
                 target="_blank"
-                style={linkStyle}
               >
                 {item.id}
               </Link>
@@ -765,18 +761,17 @@ const DashboardTables = () => {
               <Link
                 url={item.admin_url}
                 target="_blank"
-                style={linkStyle}
               >
                 {item.order_number || item.name}
               </Link>
             </IndexTable.Cell>
             <IndexTable.Cell>
-              <Text style={textStyle}>
+              <Text>
                 {item.currency} {item.total_price}
               </Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
-              <Text style={textStyle}>{item.customer?.name}</Text>
+              <Text>{item.customer?.name}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Button size="slim" onClick={() => handleOpen(item)}>
@@ -822,19 +817,18 @@ const DashboardTables = () => {
               )}
             </IndexTable.Cell>
             <IndexTable.Cell>
-              <Text style={textStyle}>{item.name}</Text>
+              <Text>{item.name}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Link
                 url={item.admin_url}
                 target="_blank"
-                style={linkStyle}
               >
                 {item.product_id}
               </Link>
             </IndexTable.Cell>
             <IndexTable.Cell>
-              <Text style={textStyle}>{item.stock}</Text>
+              <Text>{item.stock}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
               <Button
@@ -861,42 +855,42 @@ const DashboardTables = () => {
           }}
         >
           <Modal.Section>
-            <Text style={textStyle} variant="headingMd">
+            <Text variant="headingMd">
               Order Details
             </Text>
             <Box paddingBlockStart="200">
-              <Text style={textStyle}>
+              <Text>
                 <strong>Order Number:</strong> {activeOrder.order_number || activeOrder.name}
               </Text>
-              <Text style={textStyle}>
+              <Text>
                 <strong>Order ID:</strong> {activeOrder.id}
               </Text>
-              <Text style={textStyle}>
+              <Text>
                 <strong>Total Value:</strong> {activeOrder.currency} {activeOrder.total_price}
               </Text>
-              <Text style={textStyle}>
+              <Text>
                 <strong>Status:</strong> {activeOrder.fulfillment_status} / {activeOrder.financial_status}
               </Text>
-              <Text style={textStyle}>
+              <Text>
                 <strong>Created:</strong> {new Date(activeOrder.created_at).toLocaleDateString()}
               </Text>
             </Box>
             
             <Box paddingBlockStart="400">
-              <Text style={textStyle} variant="headingMd">
+              <Text variant="headingMd">
                 Customer Information
               </Text>
               <Box paddingBlockStart="200">
-                <Text style={textStyle}>
+                <Text>
                   <strong>Name:</strong> {activeOrder.customer?.name}
                 </Text>
                 {activeOrder.customer?.email && (
-                  <Text style={textStyle}>
+                  <Text>
                     <strong>Email:</strong> {activeOrder.customer.email}
                   </Text>
                 )}
                 {activeOrder.customer?.phone && (
-                  <Text style={textStyle}>
+                  <Text>
                     <strong>Phone:</strong> {activeOrder.customer.phone}
                   </Text>
                 )}
@@ -905,20 +899,20 @@ const DashboardTables = () => {
 
             {activeOrder.shipping_address && (
               <Box paddingBlockStart="400">
-                <Text style={textStyle} variant="headingMd">
+                <Text variant="headingMd">
                   Shipping Address
                 </Text>
                 <Box paddingBlockStart="200">
-                  <Text style={textStyle}>
+                  <Text>
                     {activeOrder.shipping_address.name}
                   </Text>
-                  <Text style={textStyle}>
+                  <Text>
                     {activeOrder.shipping_address.address1}
                   </Text>
-                  <Text style={textStyle}>
+                  <Text>
                     {activeOrder.shipping_address.city}, {activeOrder.shipping_address.province} {activeOrder.shipping_address.zip}
                   </Text>
-                  <Text style={textStyle}>
+                  <Text>
                     {activeOrder.shipping_address.country}
                   </Text>
                 </Box>
@@ -926,11 +920,11 @@ const DashboardTables = () => {
             )}
 
             <Box paddingBlockStart="400">
-              <Text style={textStyle} variant="headingMd">
+              <Text variant="headingMd">
                 Order Items
               </Text>
               <Box paddingBlockStart="200">
-                <Text style={textStyle}>{activeOrder.summary}</Text>
+                <Text>{activeOrder.summary}</Text>
               </Box>
             </Box>
 
