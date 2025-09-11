@@ -9,13 +9,11 @@
 // export const getCustomers = () => axios.get(`${API}/customers`);
 
 import axios from "axios";
+import config from "../config/shopify";
 
 // Backend API base URL
 // Switch between production and local easily
-const API =
-  window.location.hostname === "localhost"
-    ? "/api"
-    : "https://analytics-dashboard-backend-plum.vercel.app/api";
+const API = config.api.baseUrl;
 
 // Orders
 export const getOrders = () => axios.get(`${API}/orders`);
@@ -37,3 +35,6 @@ export const getNotifications = () => axios.get(`${API}/notifications`);
 export const markNotificationAsRead = (id) => axios.patch(`${API}/notifications/${id}/read`);
 export const archiveNotification = (id) => axios.patch(`${API}/notifications/${id}/archive`);
 export const markAllNotificationsAsRead = () => axios.patch(`${API}/notifications/mark-all-read`);
+
+// Authentication
+export const logout = () => axios.post(`${API}/auth/logout`);

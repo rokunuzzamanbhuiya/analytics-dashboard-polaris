@@ -11,10 +11,6 @@ import {
   Modal,
   Box,
   Badge,
-  TextField,
-  Button,
-  Form,
-  FormLayout,
 } from "@shopify/polaris";
 import OrderNotifications from "./OrderNotifications";
 import { 
@@ -22,17 +18,17 @@ import {
   markNotificationAsRead, 
   archiveNotification 
 } from "../api/shopify";
+import config from "../config/shopify";
 
 function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
   const [showNotifications, setShowNotifications] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
 
   // --- Notifications State ---
   const [notifications, setNotifications] = useState([]);
 
-  // --- Login State ---
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // --- User State ---
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Fetch notifications from API
   const fetchNotifications = async () => {
@@ -99,11 +95,48 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
     }
   };
 
-  // Handle login (demo)
-  const handleLogin = () => {
-    console.log("Email:", email, "Password:", password);
-    setShowLogin(false);
+  // Handle Shopify OAuth login
+  const handleShopifyLogin = () => {
+    // Get the current hostname to determine the redirect URL
+    const hostname = window.location.hostname;
+    const redirectUri = hostname === 'localhost' 
+      ? 'http://localhost:5173/auth/callback'
+      : `https://${hostname}/auth/callback`;
+    
+    // Use configuration values
+    const { storeDomain, apiKey, scopes } = config.shopify;
+    
+    // Validate configuration
+    if (storeDomain === 'your-store.myshopify.com' || apiKey === 'your-api-key') {
+      alert('Please configure your Shopify store domain and API key in the config file.');
+      return;
+    }
+    
+    // Shopify OAuth URL
+    const shopifyAuthUrl = `https://${storeDomain}/admin/oauth/authorize?client_id=${apiKey}&scope=${scopes}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    
+    // Redirect to Shopify OAuth
+    window.location.href = shopifyAuthUrl;
   };
+
+  // Check if user is authenticated on component mount
+  useEffect(() => {
+    const checkAuth = () => {
+      const userData = localStorage.getItem('shopify_user');
+      if (userData) {
+        try {
+          const parsedUser = JSON.parse(userData);
+          setUser(parsedUser);
+          setIsAuthenticated(true);
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          localStorage.removeItem('shopify_user');
+        }
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   return (
     <header className="header">
@@ -140,13 +173,34 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
           )}
         </div>
 
-        {/* Login icon */}
-        <span
-          className="icon cursor-pointer"
-          onClick={() => setShowLogin(true)}
-        >
-          <BsPersonCircle />
-        </span>
+        {/* User profile or login */}
+        {isAuthenticated && user ? (
+          <div className="user-profile">
+            <img 
+              src={user.avatar_url || user.image || '/default-avatar.png'} 
+              alt={user.first_name || 'User'} 
+              className="user-avatar"
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                cursor: 'pointer'
+              }}
+              onClick={() => {
+                // Could add a user menu here
+                console.log('User profile clicked');
+              }}
+            />
+          </div>
+        ) : (
+          <span
+            className="icon cursor-pointer"
+            onClick={handleShopifyLogin}
+            title="Login with Shopify"
+          >
+            <BsPersonCircle />
+          </span>
+        )}
 
         <span className="icon theme-toggle-icon" onClick={toggleTheme}>
           {isDarkTheme ? <BsSun /> : <BsMoon />}
@@ -170,34 +224,6 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
         </Box>
       </Modal>
 
-      {/* Login Modal */}
-      <Modal open={showLogin} onClose={() => setShowLogin(false)} title="Login">
-        <Box padding="400">
-          <Form onSubmit={handleLogin}>
-            <FormLayout>
-              <TextField
-                label="Email"
-                type="email"
-                value={email}
-                onChange={setEmail}
-                autoComplete="email"
-                requiredIndicator
-              />
-              <TextField
-                label="Password"
-                type="password"
-                value={password}
-                onChange={setPassword}
-                autoComplete="current-password"
-                requiredIndicator
-              />
-              <Button submit primary>
-                Login
-              </Button>
-            </FormLayout>
-          </Form>
-        </Box>
-      </Modal>
     </header>
   );
 }
