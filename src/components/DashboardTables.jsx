@@ -588,7 +588,6 @@ import {
   getPendingOrders,
   getLowStockProducts,
 } from "../api/shopify";
-// import "./DashboardTables.css"; // import CSS file for table overrides
 
 const DashboardTables = () => {
   const [bestSelling, setBestSelling] = useState([]);
@@ -606,26 +605,27 @@ const DashboardTables = () => {
       try {
         setLoading(true);
         console.log("🔄 Fetching dashboard data...");
-        
+
         const [bestRes, worstRes, ordersRes, stockRes] = await Promise.all([
           getBestSelling(),
           getWorstSelling(),
           getPendingOrders(),
           getLowStockProducts(),
         ]);
-        
+
         console.log("📊 API Responses:", {
-          bestSelling: bestRes.data,
-          worstSelling: worstRes.data,
-          pendingOrders: ordersRes.data,
-          lowStock: stockRes.data
+          bestSelling: bestRes?.data,
+          worstSelling: worstRes?.data,
+          pendingOrders: ordersRes?.data,
+          lowStock: stockRes?.data,
         });
-        
-        setBestSelling(bestRes.data || []);
-        setWorstSelling(worstRes.data || []);
-        setPendingOrders(ordersRes.data || []);
-        setLowStock(stockRes.data || []);
-        
+
+        // ✅ Extract actual arrays
+        setBestSelling(bestRes?.data?.data || []);
+        setWorstSelling(worstRes?.data?.data || []);
+        setPendingOrders(ordersRes?.data?.data || []);
+        setLowStock(stockRes?.data?.data || []);
+
         console.log("✅ Data set successfully");
       } catch (error) {
         console.error("❌ Error fetching dashboard data:", error);
@@ -636,7 +636,6 @@ const DashboardTables = () => {
     };
     fetchData();
   }, []);
-
 
   const renderTable = (title, items, columns, rowRenderer) => {
     const safeItems = Array.isArray(items) ? items : [];
@@ -675,10 +674,7 @@ const DashboardTables = () => {
   };
 
   return (
-    <div
-      className="dashboard-tables"
-      style={{ width: "100%", padding: "1rem" }}
-    >
+    <div className="dashboard-tables" style={{ width: "100%", padding: "1rem" }}>
       {/* Best Selling */}
       {renderTable(
         "Best Selling Products",
@@ -690,19 +686,12 @@ const DashboardTables = () => {
               <Text>{item.name}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
-              <Link
-                url={item.admin_url}
-                target="_blank"
-              >
+              <Link url={item.admin_url} target="_blank">
                 {item.id}
               </Link>
             </IndexTable.Cell>
             <IndexTable.Cell>
-              <Button
-                url={item.public_url}
-                target="_blank"
-                size="slim"
-              >
+              <Button url={item.public_url} target="_blank" size="slim">
                 View
               </Button>
             </IndexTable.Cell>
@@ -723,19 +712,12 @@ const DashboardTables = () => {
               <Text>{item.name}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
-              <Link
-                url={item.admin_url}
-                target="_blank"
-              >
+              <Link url={item.admin_url} target="_blank">
                 {item.id}
               </Link>
             </IndexTable.Cell>
             <IndexTable.Cell>
-              <Button
-                url={item.public_url}
-                target="_blank"
-                size="slim"
-              >
+              <Button url={item.public_url} target="_blank" size="slim">
                 View
               </Button>
             </IndexTable.Cell>
@@ -758,10 +740,7 @@ const DashboardTables = () => {
         (item, index) => (
           <IndexTable.Row id={item.id} key={`${item.id}-${index}`} position={index}>
             <IndexTable.Cell>
-              <Link
-                url={item.admin_url}
-                target="_blank"
-              >
+              <Link url={item.admin_url} target="_blank">
                 {item.order_number || item.name}
               </Link>
             </IndexTable.Cell>
@@ -801,17 +780,19 @@ const DashboardTables = () => {
               {item.image ? (
                 <Thumbnail source={item.image} alt={item.name} size="small" />
               ) : (
-                <div style={{ 
-                  width: 40, 
-                  height: 40, 
-                  backgroundColor: '#f6f6f7', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  color: '#6d7175'
-                }}>
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    backgroundColor: "#f6f6f7",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "4px",
+                    fontSize: "12px",
+                    color: "#6d7175",
+                  }}
+                >
                   No Image
                 </div>
               )}
@@ -820,10 +801,7 @@ const DashboardTables = () => {
               <Text>{item.name}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
-              <Link
-                url={item.admin_url}
-                target="_blank"
-              >
+              <Link url={item.admin_url} target="_blank">
                 {item.product_id}
               </Link>
             </IndexTable.Cell>
@@ -831,11 +809,7 @@ const DashboardTables = () => {
               <Text>{item.stock}</Text>
             </IndexTable.Cell>
             <IndexTable.Cell>
-              <Button
-                url={item.public_url}
-                target="_blank"
-                size="slim"
-              >
+              <Button url={item.public_url} target="_blank" size="slim">
                 View
               </Button>
             </IndexTable.Cell>
@@ -855,31 +829,31 @@ const DashboardTables = () => {
           }}
         >
           <Modal.Section>
-            <Text variant="headingMd">
-              Order Details
-            </Text>
+            <Text variant="headingMd">Order Details</Text>
             <Box paddingBlockStart="200">
               <Text>
-                <strong>Order Number:</strong> {activeOrder.order_number || activeOrder.name}
+                <strong>Order Number:</strong>{" "}
+                {activeOrder.order_number || activeOrder.name}
               </Text>
               <Text>
                 <strong>Order ID:</strong> {activeOrder.id}
               </Text>
               <Text>
-                <strong>Total Value:</strong> {activeOrder.currency} {activeOrder.total_price}
+                <strong>Total Value:</strong> {activeOrder.currency}{" "}
+                {activeOrder.total_price}
               </Text>
               <Text>
-                <strong>Status:</strong> {activeOrder.fulfillment_status} / {activeOrder.financial_status}
+                <strong>Status:</strong> {activeOrder.fulfillment_status} /{" "}
+                {activeOrder.financial_status}
               </Text>
               <Text>
-                <strong>Created:</strong> {new Date(activeOrder.created_at).toLocaleDateString()}
+                <strong>Created:</strong>{" "}
+                {new Date(activeOrder.created_at).toLocaleDateString()}
               </Text>
             </Box>
-            
+
             <Box paddingBlockStart="400">
-              <Text variant="headingMd">
-                Customer Information
-              </Text>
+              <Text variant="headingMd">Customer Information</Text>
               <Box paddingBlockStart="200">
                 <Text>
                   <strong>Name:</strong> {activeOrder.customer?.name}
@@ -899,40 +873,29 @@ const DashboardTables = () => {
 
             {activeOrder.shipping_address && (
               <Box paddingBlockStart="400">
-                <Text variant="headingMd">
-                  Shipping Address
-                </Text>
+                <Text variant="headingMd">Shipping Address</Text>
                 <Box paddingBlockStart="200">
+                  <Text>{activeOrder.shipping_address.name}</Text>
+                  <Text>{activeOrder.shipping_address.address1}</Text>
                   <Text>
-                    {activeOrder.shipping_address.name}
+                    {activeOrder.shipping_address.city},{" "}
+                    {activeOrder.shipping_address.province}{" "}
+                    {activeOrder.shipping_address.zip}
                   </Text>
-                  <Text>
-                    {activeOrder.shipping_address.address1}
-                  </Text>
-                  <Text>
-                    {activeOrder.shipping_address.city}, {activeOrder.shipping_address.province} {activeOrder.shipping_address.zip}
-                  </Text>
-                  <Text>
-                    {activeOrder.shipping_address.country}
-                  </Text>
+                  <Text>{activeOrder.shipping_address.country}</Text>
                 </Box>
               </Box>
             )}
 
             <Box paddingBlockStart="400">
-              <Text variant="headingMd">
-                Order Items
-              </Text>
+              <Text variant="headingMd">Order Items</Text>
               <Box paddingBlockStart="200">
                 <Text>{activeOrder.summary}</Text>
               </Box>
             </Box>
 
             <Box paddingBlockStart="400">
-              <Button
-                url={activeOrder.admin_url}
-                target="_blank"
-              >
+              <Button url={activeOrder.admin_url} target="_blank">
                 View in Shopify Admin
               </Button>
             </Box>
@@ -944,3 +907,4 @@ const DashboardTables = () => {
 };
 
 export default DashboardTables;
+

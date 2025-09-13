@@ -9,19 +9,12 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import {
-  BsFillArchiveFill,
-  BsFillGrid3X3GapFill,
-  BsPeopleFill,
-  BsCurrencyDollar,
-} from "react-icons/bs";
-import { Icon } from "@shopify/polaris";
-import {
   ProductIcon,
   OrderIcon,
   CashDollarIcon,
   PersonIcon,
 } from "@shopify/polaris-icons";
-import Dashboard from "./Dashboard";
+import { Icon } from "@shopify/polaris";
 import DashboardTables from "./DashboardTables";
 // import OrderNotifications from "./OrderNotifications";
 
@@ -40,12 +33,16 @@ function Home() {
           getCustomers(),
         ]);
 
-        setOrders(ordersRes.data);
-        setProducts(productsRes.data);
-        setCustomers(customersRes.data);
+        const orderList = ordersRes?.data?.data || [];
+        const productList = productsRes?.data?.data || [];
+        const customerList = customersRes?.data?.data || [];
 
-        const revenue = ordersRes.data.reduce(
-          (sum, order) => sum + parseFloat(order.total_price),
+        setOrders(orderList);
+        setProducts(productList);
+        setCustomers(customerList);
+
+        const revenue = orderList.reduce(
+          (sum, order) => sum + parseFloat(order?.total_price || 0),
           0
         );
         setTotalRevenue(revenue);
@@ -54,26 +51,22 @@ function Home() {
       }
     }
 
-    // Fetch initially
     fetchData();
-
-    // Set interval every 2 seconds
     const interval = setInterval(fetchData, 2000);
-
-    // Cleanup on unmount
     return () => clearInterval(interval);
   }, []);
 
-  const chartData = orders.map((order) => ({
-    name: order.name,
-    total: parseFloat(order.total_price),
-  }));
+  const chartData = Array.isArray(orders)
+    ? orders.map((order) => ({
+        name: order?.name || "N/A",
+        total: parseFloat(order?.total_price || 0),
+      }))
+    : [];
 
   return (
     <main className="main-container">
       <div className="main-title">
         <h3>DASHBOARD</h3>
-        {/* <span className="badge">Live</span> */}
       </div>
 
       <div className="main-cards">
@@ -121,6 +114,7 @@ function Home() {
           </BarChart>
         </ResponsiveContainer>
       </div>
+
       <DashboardTables />
       {/* <OrderNotifications /> */}
     </main>
