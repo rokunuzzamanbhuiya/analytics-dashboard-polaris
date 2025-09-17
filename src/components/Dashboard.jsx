@@ -88,10 +88,11 @@ const Dashboard = () => {
           axios.get("/api/orders/pending"),
           axios.get("/api/products/low-stock"),
         ]);
-        setBestSelling(bestRes.data || []);
-        setWorstSelling(worstRes.data || []);
-        setPendingOrders(ordersRes.data || []);
-        setLowStock(stockRes.data || []);
+        // Handle new API response format: {success: true, data: array, count: number, ...}
+        setBestSelling(bestRes.data?.data || []);
+        setWorstSelling(worstRes.data?.data || []);
+        setPendingOrders(ordersRes.data?.data || []);
+        setLowStock(stockRes.data?.data || []);
       } catch (error) {
         console.error("Error fetching dashboard tables:", error);
       } finally {
@@ -256,7 +257,7 @@ const Dashboard = () => {
               </IndexTable.Cell>
               <IndexTable.Cell>
                 <Link
-                  url={`https://admin.shopify.com/products/${item.id}`}
+                  url={item.admin_url || `https://admin.shopify.com/products/${item.id}`}
                   target="_blank"
                 >
                   {item.id}
@@ -264,7 +265,7 @@ const Dashboard = () => {
               </IndexTable.Cell>
               <IndexTable.Cell>
                 <Button
-                  url={`https://admin.shopify.com/products/${item.id}`}
+                  url={item.public_url || `https://admin.shopify.com/products/${item.id}`}
                   target="_blank"
                   size="slim"
                 >
@@ -288,7 +289,7 @@ const Dashboard = () => {
               </IndexTable.Cell>
               <IndexTable.Cell>
                 <Link
-                  url={`https://admin.shopify.com/products/${item.id}`}
+                  url={item.admin_url || `https://admin.shopify.com/products/${item.id}`}
                   target="_blank"
                 >
                   {item.id}
@@ -296,7 +297,7 @@ const Dashboard = () => {
               </IndexTable.Cell>
               <IndexTable.Cell>
                 <Button
-                  url={`https://admin.shopify.com/products/${item.id}`}
+                  url={item.public_url || `https://admin.shopify.com/products/${item.id}`}
                   target="_blank"
                   size="slim"
                 >
@@ -365,7 +366,7 @@ const Dashboard = () => {
               </IndexTable.Cell>
               <IndexTable.Cell>
                 <Link
-                  url={`https://admin.shopify.com/products/${item.id}`}
+                  url={item.admin_url || `https://admin.shopify.com/products/${item.id}`}
                   target="_blank"
                 >
                   {item.id}
@@ -376,7 +377,7 @@ const Dashboard = () => {
               </IndexTable.Cell>
               <IndexTable.Cell>
                 <Button
-                  url={`https://admin.shopify.com/products/${item.id}`}
+                  url={item.public_url || `https://admin.shopify.com/products/${item.id}`}
                   target="_blank"
                   size="slim"
                 >

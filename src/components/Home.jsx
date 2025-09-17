@@ -40,17 +40,34 @@ function Home() {
           getCustomers(),
         ]);
 
-        setOrders(ordersRes.data);
-        setProducts(productsRes.data);
-        setCustomers(customersRes.data);
+        // Handle new API response format: {success: true, data: array, count: number, ...}
+        console.log('API Response Debug:', {
+          orders: ordersRes.data,
+          products: productsRes.data,
+          customers: customersRes.data
+        });
+        
+        const ordersData = Array.isArray(ordersRes.data?.data) ? ordersRes.data.data : [];
+        const productsData = Array.isArray(productsRes.data?.data) ? productsRes.data.data : [];
+        const customersData = Array.isArray(customersRes.data?.data) ? customersRes.data.data : [];
 
-        const revenue = ordersRes.data.reduce(
-          (sum, order) => sum + parseFloat(order.total_price),
+        setOrders(ordersData);
+        setProducts(productsData);
+        setCustomers(customersData);
+
+        // Calculate revenue only if orders data is valid
+        const revenue = ordersData.reduce(
+          (sum, order) => sum + parseFloat(order.total_price || 0),
           0
         );
         setTotalRevenue(revenue);
       } catch (error) {
         console.error("Failed to fetch data", error);
+        // Set empty arrays on error to prevent crashes
+        setOrders([]);
+        setProducts([]);
+        setCustomers([]);
+        setTotalRevenue(0);
       }
     }
 
@@ -64,10 +81,10 @@ function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const chartData = orders.map((order) => ({
-    name: order.name,
-    total: parseFloat(order.total_price),
-  }));
+  const chartData = Array.isArray(orders) ? orders.map((order) => ({
+    name: order.name || 'Unknown',
+    total: parseFloat(order.total_price || 0),
+  })) : [];
 
   return (
     <main className="main-container">

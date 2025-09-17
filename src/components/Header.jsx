@@ -36,11 +36,13 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
       const response = await getNotifications();
       console.log('🔔 API Response:', response.data);
       
-      // Ensure we always set an array
+      // Handle new API response format: {success: true, data: array, count: number, ...}
       const data = response.data;
-      if (Array.isArray(data)) {
-        setNotifications(data);
-        console.log('🔔 Notifications fetched:', data.length);
+      const notificationsData = Array.isArray(data?.data) ? data.data : [];
+      
+      if (Array.isArray(notificationsData)) {
+        setNotifications(notificationsData);
+        console.log('🔔 Notifications fetched:', notificationsData.length);
       } else {
         console.warn('⚠️ API returned non-array data:', data);
         setNotifications([]);
@@ -57,8 +59,8 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
     // Initial fetch
     fetchNotifications();
     
-    // Set up polling every 45 seconds
-    const interval = setInterval(fetchNotifications, 45000);
+    // Set up polling every 5 seconds
+    const interval = setInterval(fetchNotifications, 5000);
     
     // Cleanup interval on unmount
     return () => clearInterval(interval);

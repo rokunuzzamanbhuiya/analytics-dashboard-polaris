@@ -621,10 +621,11 @@ const DashboardTables = () => {
           lowStock: stockRes.data
         });
         
-        setBestSelling(bestRes.data || []);
-        setWorstSelling(worstRes.data || []);
-        setPendingOrders(ordersRes.data || []);
-        setLowStock(stockRes.data || []);
+        // Handle new API response format: {success: true, data: array, count: number, ...}
+        setBestSelling(bestRes.data?.data || []);
+        setWorstSelling(worstRes.data?.data || []);
+        setPendingOrders(ordersRes.data?.data || []);
+        setLowStock(stockRes.data?.data || []);
         
         console.log("✅ Data set successfully");
       } catch (error) {
