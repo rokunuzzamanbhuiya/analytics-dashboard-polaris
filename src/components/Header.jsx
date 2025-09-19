@@ -105,17 +105,24 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
       ? 'http://localhost:5173/auth/callback'
       : `https://${hostname}/auth/callback`;
     
-    // Use configuration values
-    const { storeDomain, apiKey, scopes } = config.shopify;
+    // Use environment variables from .env file
+    const storeDomain = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN;
+    const apiKey = import.meta.env.VITE_SHOPIFY_API_KEY;
+    const scopes = 'read_products,read_orders,read_customers,read_analytics';
     
     // Validate configuration
-    if (storeDomain === 'your-store.myshopify.com' || apiKey === 'your-api-key') {
-      alert('Please configure your Shopify store domain and API key in the config file.');
+    if (!storeDomain || !apiKey || storeDomain === 'your-store.myshopify.com' || apiKey === 'your-api-key') {
+      alert('Please configure your Shopify store domain and API key in the .env file.');
       return;
     }
     
-    // Shopify OAuth URL
+    // Shopify OAuth URL - Using environment variables
     const shopifyAuthUrl = `https://${storeDomain}/admin/oauth/authorize?client_id=${apiKey}&scope=${scopes}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    
+    console.log('OAuth URL:', shopifyAuthUrl); // Debug log
+    console.log('Redirect URI:', redirectUri); // Debug log
+    console.log('Store Domain:', storeDomain); // Debug log
+    console.log('API Key:', apiKey ? 'Set' : 'Not set'); // Debug log (don't log actual key)
     
     // Redirect to Shopify OAuth
     window.location.href = shopifyAuthUrl;
