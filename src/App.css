@@ -131,35 +131,54 @@
   font-weight: 500;
 }
 
-/* Card background and text for dark theme */
-.card {
+/* Card background and text for dark theme - CONSOLIDATED */
+.card,
+.metric-card {
   background-color: #263043 !important;
-  /* Same as sidebar in dark mode */
   color: #fff !important;
-  /* White text/icons */
   box-shadow: 0 1px 3px 0 rgba(23, 24, 24, 0.08),
     0 1.5px 6px 0 rgba(23, 24, 24, 0.08);
-  border-radius: 8px;
+  border-radius: 16px !important;
   border: 1px solid #222b3a;
   transition: background 0.2s, color 0.2s;
+  overflow: hidden !important;
+  padding: 20px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
 }
 
 .card h3,
 .card h1,
-.card .card_icon {
+.card .card_icon,
+.metric-card h3,
+.metric-card h1,
+.metric-card .card_icon {
   color: #fff !important;
 }
 
-/* Light theme: keep Polaris style */
-body.light-theme .card {
+/* Light theme: keep Polaris style - CONSOLIDATED */
+body.light-theme .card,
+body.light-theme .metric-card {
   background-color: #f6f6f7 !important;
   color: #202223 !important;
   border: 1px solid #e1e3e5;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  padding: 20px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
 }
 
 body.light-theme .card h3,
 body.light-theme .card h1,
-body.light-theme .card .card_icon {
+body.light-theme .card .card_icon,
+body.light-theme .metric-card h3,
+body.light-theme .metric-card h1,
+body.light-theme .metric-card .card_icon {
   color: #202223 !important;
 }
 
@@ -423,14 +442,7 @@ body.light-theme .main-title h3 {
   color: #fff;
 }
 
-.card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 8px 15px;
-  border-radius: 5px;
-}
+/* Removed conflicting card styles - using the working ones below */
 
 .card-inner {
   display: flex;
@@ -525,16 +537,61 @@ body.light-theme .sidebar-brand .icon_header {
   width: 100%;
 }
 
-/* Override Card background for dark theme */
+/* Table header styling - CONSOLIDATED */
+.table-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #222b3a;
+  background-color: #263043;
+}
+
+.table-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.table-loading,
+.table-empty {
+  padding: 40px;
+  text-align: center;
+  color: #9e9ea4;
+}
+
+.table-content {
+  background-color: #1d2634;
+}
+
+/* Light theme table styling - CONSOLIDATED */
+body.light-theme .table-header {
+  background-color: #f6f6f7;
+  border-bottom: 1px solid #e1e3e5;
+}
+
+body.light-theme .table-title {
+  color: #202223;
+}
+
+body.light-theme .table-loading,
+body.light-theme .table-empty {
+  color: #6d7175;
+}
+
+body.light-theme .table-content {
+  background-color: #ffffff;
+}
+
+/* Override Card background for dark theme - CONSOLIDATED */
 .dashboard-tables .Polaris-Card,
 .dashboard-tables .Polaris-Card__Section,
 .dashboard-tables .Polaris-Card__Section--subdued,
 .dashboard-table-card {
   background-color: #263043 !important;
   border: 1px solid #222b3a !important;
-  border-radius: 8px;
+  border-radius: 16px !important;
   box-shadow: 0 1px 3px 0 rgba(23, 24, 24, 0.08),
     0 1.5px 6px 0 rgba(23, 24, 24, 0.08) !important;
+  overflow: hidden !important;
 }
 
 body.light-theme .dashboard-tables .Polaris-Card,
@@ -543,6 +600,8 @@ body.light-theme .dashboard-tables .Polaris-Card__Section--subdued,
 body.light-theme .dashboard-table-card {
   background-color: #f6f6f7 !important;
   border: 1px solid #e1e3e5 !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
 }
 
 /* Dark mode for table content */
