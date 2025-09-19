@@ -9,19 +9,12 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import {
-  BsFillArchiveFill,
-  BsFillGrid3X3GapFill,
-  BsPeopleFill,
-  BsCurrencyDollar,
-} from "react-icons/bs";
-import { Icon } from "@shopify/polaris";
-import {
   ProductIcon,
   OrderIcon,
   CashDollarIcon,
   PersonIcon,
 } from "@shopify/polaris-icons";
-import Dashboard from "./Dashboard";
+import { Icon } from "@shopify/polaris";
 import DashboardTables from "./DashboardTables";
 // import OrderNotifications from "./OrderNotifications";
 
@@ -71,13 +64,8 @@ function Home() {
       }
     }
 
-    // Fetch initially
     fetchData();
-
-    // Set interval every 2 seconds
     const interval = setInterval(fetchData, 2000);
-
-    // Cleanup on unmount
     return () => clearInterval(interval);
   }, []);
 
@@ -86,11 +74,11 @@ function Home() {
     total: parseFloat(order.total_price || 0),
   })) : [];
 
+
   return (
     <main className="main-container">
       <div className="main-title">
         <h3>DASHBOARD</h3>
-        {/* <span className="badge">Live</span> */}
       </div>
 
       <div className="main-cards">
@@ -138,6 +126,7 @@ function Home() {
           </BarChart>
         </ResponsiveContainer>
       </div>
+
       <DashboardTables />
       {/* <OrderNotifications /> */}
     </main>
