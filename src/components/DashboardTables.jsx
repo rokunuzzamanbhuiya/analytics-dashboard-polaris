@@ -226,6 +226,7 @@ const DashboardTables = ({ darkMode = false }) => {
         darkMode={darkMode}
       />
 
+
       {/* Order Modal */}
       {isOpen && activeOrder && (
         <Modal
@@ -238,31 +239,30 @@ const DashboardTables = ({ darkMode = false }) => {
           }}
         >
           <Modal.Section>
-            <Text variant="headingMd">
-              Order Details
-            </Text>
+            <Text variant="headingMd">Order Details</Text>
             <Box paddingBlockStart="200">
               <Text>
-                <strong>Order Number:</strong> {activeOrder.order_number || activeOrder.name}
+                <strong>Order Number:</strong>{" "}
+                {activeOrder.order_number || activeOrder.name}
               </Text>
               <Text>
                 <strong>Order ID:</strong> {activeOrder.id}
               </Text>
               <Text>
-                <strong>Total Value:</strong> {activeOrder.currency} {activeOrder.total_price}
+                <strong>Total Value:</strong> {activeOrder.currency}{" "}
+                {activeOrder.total_price}
               </Text>
               <Text>
-                <strong>Status:</strong> {activeOrder.fulfillment_status} / {activeOrder.financial_status}
+                <strong>Status:</strong> {activeOrder.fulfillment_status} /{" "}
+                {activeOrder.financial_status}
               </Text>
               <Text>
                 <strong>Created:</strong> {formatDate(activeOrder.created_at)}
               </Text>
             </Box>
-            
+
             <Box paddingBlockStart="400">
-              <Text variant="headingMd">
-                Customer Information
-              </Text>
+              <Text variant="headingMd">Customer Information</Text>
               <Box paddingBlockStart="200">
                 <Text>
                   <strong>Name:</strong> {activeOrder.customer?.name}
@@ -282,40 +282,29 @@ const DashboardTables = ({ darkMode = false }) => {
 
             {activeOrder.shipping_address && (
               <Box paddingBlockStart="400">
-                <Text variant="headingMd">
-                  Shipping Address
-                </Text>
+                <Text variant="headingMd">Shipping Address</Text>
                 <Box paddingBlockStart="200">
+                  <Text>{activeOrder.shipping_address.name}</Text>
+                  <Text>{activeOrder.shipping_address.address1}</Text>
                   <Text>
-                    {activeOrder.shipping_address.name}
+                    {activeOrder.shipping_address.city},{" "}
+                    {activeOrder.shipping_address.province}{" "}
+                    {activeOrder.shipping_address.zip}
                   </Text>
-                  <Text>
-                    {activeOrder.shipping_address.address1}
-                  </Text>
-                  <Text>
-                    {activeOrder.shipping_address.city}, {activeOrder.shipping_address.province} {activeOrder.shipping_address.zip}
-                  </Text>
-                  <Text>
-                    {activeOrder.shipping_address.country}
-                  </Text>
+                  <Text>{activeOrder.shipping_address.country}</Text>
                 </Box>
               </Box>
             )}
 
             <Box paddingBlockStart="400">
-              <Text variant="headingMd">
-                Order Items
-              </Text>
+              <Text variant="headingMd">Order Items</Text>
               <Box paddingBlockStart="200">
                 <Text>{activeOrder.summary}</Text>
               </Box>
             </Box>
 
             <Box paddingBlockStart="400">
-              <Button
-                url={activeOrder.admin_url}
-                target="_blank"
-              >
+              <Button url={activeOrder.admin_url} target="_blank">
                 View in Shopify Admin
               </Button>
             </Box>
