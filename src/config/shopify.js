@@ -21,7 +21,7 @@ const config = {
   api: {
     baseUrl: window.location.hostname === 'localhost' 
       ? '/api'  // Use Vite proxy for local development
-      : 'https://analytics-dashboard-backend-plum.vercel.app/api'
+      : 'https://analytics-dashboard-back.vercel.app/api'
   }
 };
 
