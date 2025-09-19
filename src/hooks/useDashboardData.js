@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getOrders, getProducts, getCustomers } from '../api/shopify';
 import axios from 'axios';
+import config from '../config/shopify';
 
 /**
  * Custom hook for fetching and managing core dashboard data
@@ -87,10 +88,10 @@ export const useDashboardTables = () => {
       console.log("🔄 Fetching dashboard tables...");
       
       const [bestRes, worstRes, ordersRes, stockRes] = await Promise.all([
-        axios.get("/api/best-selling"),
-        axios.get("/api/worst-selling"),
-        axios.get("/api/orders/pending"),
-        axios.get("/api/products/low-stock"),
+        axios.get(`${config.api.baseUrl}/best-selling`),
+        axios.get(`${config.api.baseUrl}/worst-selling`),
+        axios.get(`${config.api.baseUrl}/orders/pending`),
+        axios.get(`${config.api.baseUrl}/products/low-stock`),
       ]);
       
       // Handle new API response format: {success: true, data: array, count: number, ...}
