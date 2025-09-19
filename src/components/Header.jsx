@@ -11,8 +11,13 @@ import {
   Modal,
   Box,
   Badge,
+  Popover,
+  ActionList,
+  Button,
+  Text,
 } from "@shopify/polaris";
 import OrderNotifications from "./OrderNotifications";
+import LoginForm from "./LoginForm";
 import { 
   getNotifications, 
   markNotificationAsRead, 
@@ -29,6 +34,10 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
   // --- User State ---
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [status, setStatus] = useState('idle');
+  const [message, setMessage] = useState('');
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [showLoginForm, setShowLoginForm] = useState(false);
 
   // Fetch notifications from API
   const fetchNotifications = async () => {
@@ -36,11 +45,13 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
       const response = await getNotifications();
       console.log('🔔 API Response:', response.data);
       
-      // Ensure we always set an array
+      // Handle new API response format: {success: true, data: array, count: number, ...}
       const data = response.data;
-      if (Array.isArray(data)) {
-        setNotifications(data);
-        console.log('🔔 Notifications fetched:', data.length);
+      const notificationsData = Array.isArray(data?.data) ? data.data : [];
+      
+      if (Array.isArray(notificationsData)) {
+        setNotifications(notificationsData);
+        console.log('🔔 Notifications fetched:', notificationsData.length);
       } else {
         console.warn('⚠️ API returned non-array data:', data);
         setNotifications([]);
@@ -57,8 +68,8 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
     // Initial fetch
     fetchNotifications();
     
-    // Set up polling every 45 seconds
-    const interval = setInterval(fetchNotifications, 45000);
+    // Set up polling every 5 seconds
+    const interval = setInterval(fetchNotifications, 5000);
     
     // Cleanup interval on unmount
     return () => clearInterval(interval);
@@ -95,28 +106,20 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
     }
   };
 
-  // Handle Shopify OAuth login
-  const handleShopifyLogin = () => {
-    // Get the current hostname to determine the redirect URL
-    const hostname = window.location.hostname;
-    const redirectUri = hostname === 'localhost' 
-      ? 'http://localhost:5173/auth/callback'
-      : `https://${hostname}/auth/callback`;
+  // Handle login button click
+  const handleLoginClick = () => {
+    setShowLoginForm(true);
+  };
+
+  // Handle successful login
+  const handleLoginSuccess = (userData) => {
+    setUser(userData);
+    setIsAuthenticated(true);
+    setShowLoginForm(false);
+    console.log('User logged in:', userData);
     
-    // Use configuration values
-    const { storeDomain, apiKey, scopes } = config.shopify;
-    
-    // Validate configuration
-    if (storeDomain === 'your-store.myshopify.com' || apiKey === 'your-api-key') {
-      alert('Please configure your Shopify store domain and API key in the config file.');
-      return;
-    }
-    
-    // Shopify OAuth URL
-    const shopifyAuthUrl = `https://${storeDomain}/admin/oauth/authorize?client_id=${apiKey}&scope=${scopes}&redirect_uri=${encodeURIComponent(redirectUri)}`;
-    
-    // Redirect to Shopify OAuth
-    window.location.href = shopifyAuthUrl;
+    // Show success message
+    alert(`Login successful! Welcome ${userData.first_name} ${userData.last_name}! You have access to the dashboard.`);
   };
 
   // Check if user is authenticated on component mount
@@ -128,6 +131,11 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
           const parsedUser = JSON.parse(userData);
           setUser(parsedUser);
           setIsAuthenticated(true);
+          
+          // Check if user has access
+          if (parsedUser.hasAccess === false) {
+            console.warn('User does not have access to this dashboard');
+          }
         } catch (error) {
           console.error('Error parsing user data:', error);
           localStorage.removeItem('shopify_user');
@@ -137,6 +145,14 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
 
     checkAuth();
   }, []);
+
+  // Handle user logout
+  const handleLogout = () => {
+    localStorage.removeItem('shopify_user');
+    setUser(null);
+    setIsAuthenticated(false);
+    console.log('User logged out');
+  };
 
   return (
     <header className="header">
@@ -153,19 +169,26 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
         <div
           className="relative icon cursor-pointer"
           onClick={() => setShowNotifications(true)}
+          style={{ position: 'relative' }}
         >
           <BsFillBellFill />
           {unreadCount > 0 && (
             <span
               style={{
                 position: "absolute",
-                top: "15px",
-                right: "125px",
+                top: "-5px",
+                right: "-5px",
                 background: "red",
                 color: "white",
                 borderRadius: "50%",
-                padding: "8px 6px",
+                padding: "2px 6px",
                 fontSize: "10px",
+                minWidth: "16px",
+                height: "16px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                lineHeight: "1"
               }}
             >
               {unreadCount}
@@ -173,38 +196,120 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
           )}
         </div>
 
-        {/* User profile or login */}
-        {isAuthenticated && user ? (
-          <div className="user-profile">
-            <img 
-              src={user.avatar_url || user.image || '/default-avatar.png'} 
-              alt={user.first_name || 'User'} 
-              className="user-avatar"
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                cursor: 'pointer'
-              }}
-              onClick={() => {
-                // Could add a user menu here
-                console.log('User profile clicked');
-              }}
-            />
-          </div>
-        ) : (
-          <span
-            className="icon cursor-pointer"
-            onClick={handleShopifyLogin}
-            title="Login with Shopify"
-          >
-            <BsPersonCircle />
-          </span>
-        )}
-
         <span className="icon theme-toggle-icon" onClick={toggleTheme}>
           {isDarkTheme ? <BsSun /> : <BsMoon />}
         </span>
+
+        {/* User profile or login */}
+        {isAuthenticated && user ? (
+          <Popover
+            active={userMenuOpen}
+            activator={
+              <div 
+                className="user-profile" 
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+                onClick={() => setUserMenuOpen(true)}
+              >
+                <div style={{ textAlign: 'right', fontSize: '12px' }}>
+                  <div style={{ fontWeight: 'bold', color: user.hasAccess ? '#00a047' : '#d72c0d' }}>
+                    {user.first_name} {user.last_name}
+                  </div>
+                </div>
+                <div
+                  className="user-avatar"
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    border: user.hasAccess ? '2px solid #00a047' : '2px solid #d72c0d',
+                    backgroundColor: user.hasAccess ? '#00a047' : '#d72c0d',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontSize: '14px',
+                    fontWeight: 'bold'
+                  }}
+                  title={`${user.first_name} ${user.last_name} - ${user.hasAccess ? 'Has Access' : 'No Access'}`}
+                >
+                  {user.first_name?.[0]}{user.last_name?.[0]}
+                </div>
+              </div>
+            }
+            onClose={() => setUserMenuOpen(false)}
+            preferredAlignment="right"
+          >
+            <Popover.Pane>
+              <Box padding="400">
+                <div style={{ marginBottom: '16px' }}>
+                  <Text variant="headingMd" as="h3">
+                    {user.first_name} {user.last_name}
+                  </Text>
+                  <Text variant="bodyMd" color="subdued">
+                    {user.email}
+                  </Text>
+                  <div style={{ marginTop: '8px' }}>
+                    <Text variant="bodySm" color={user.hasAccess ? 'success' : 'critical'}>
+                      {user.hasAccess ? '✓ Access Granted' : '✗ Access Denied'}
+                    </Text>
+                  </div>
+                </div>
+                <ActionList
+                  items={[
+                    {
+                      content: 'Logout',
+                      icon: 'logout',
+                      onAction: () => {
+                        setUserMenuOpen(false);
+                        handleLogout();
+                      }
+                    }
+                  ]}
+                />
+              </Box>
+            </Popover.Pane>
+          </Popover>
+        ) : (
+          <Popover
+            active={userMenuOpen}
+            activator={
+              <span
+                className="icon cursor-pointer"
+                onClick={() => setUserMenuOpen(true)}
+                title="Login with Shopify"
+              >
+                <BsPersonCircle />
+              </span>
+            }
+            onClose={() => setUserMenuOpen(false)}
+            preferredAlignment="right"
+          >
+            <Popover.Pane>
+              <Box padding="400">
+                <div style={{ marginBottom: '16px' }}>
+                  <Text variant="headingMd" as="h3">
+                    Welcome to Shopify Analytics
+                  </Text>
+                  <Text variant="bodyMd" color="subdued">
+                    Sign in to access your dashboard
+                  </Text>
+                </div>
+                <ActionList
+                  items={[
+                    {
+                      content: 'Login',
+                      icon: 'login',
+                      onAction: () => {
+                        setUserMenuOpen(false);
+                        handleLoginClick();
+                      }
+                    }
+                  ]}
+                />
+              </Box>
+            </Popover.Pane>
+          </Popover>
+        )}
       </div>
 
       {/* Notifications Modal */}
@@ -224,6 +329,12 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
         </Box>
       </Modal>
 
+      {/* Login Form Modal */}
+      <LoginForm
+        isOpen={showLoginForm}
+        onClose={() => setShowLoginForm(false)}
+        onLogin={handleLoginSuccess}
+      />
     </header>
   );
 }
