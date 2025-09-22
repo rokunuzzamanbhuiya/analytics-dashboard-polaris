@@ -161,7 +161,7 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
       </div>
 
       <div className="header-left">
-        <BsSearch className="icon" />
+        {/* <BsSearch className="icon" /> */}
       </div>
 
       <div className="header-right">
