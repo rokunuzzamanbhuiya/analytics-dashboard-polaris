@@ -27,8 +27,8 @@ export const getLowStockProducts = () => axios.get(`${API}/products/low-stock`);
 export const getCustomers = () => axios.get(`${API}/customers`);
 
 // Sales stats
-export const getBestSelling = () => axios.get(`${API}/best-selling`);
-export const getWorstSelling = () => axios.get(`${API}/worst-selling`);
+export const getBestSelling = () => axios.get(`${API}/products/best-selling`);
+export const getWorstSelling = () => axios.get(`${API}/products/worst-selling`);
 
 // Notifications
 export const getNotifications = () => axios.get(`${API}/notifications`);

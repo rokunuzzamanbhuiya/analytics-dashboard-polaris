@@ -26,14 +26,14 @@ export const useDashboardData = () => {
         getCustomers(),
       ]);
 
-      setOrders(ordersRes.data || []);
-      setProducts(productsRes.data || []);
-      setCustomers(customersRes.data || []);
+      setOrders(ordersRes.data?.data || []);
+      setProducts(productsRes.data?.data || []);
+      setCustomers(customersRes.data?.data || []);
       
       console.log("✅ Core data updated:", {
-        orders: ordersRes.data?.length || 0,
-        products: productsRes.data?.length || 0,
-        customers: customersRes.data?.length || 0
+        orders: ordersRes.data?.data?.length || 0,
+        products: productsRes.data?.data?.length || 0,
+        customers: customersRes.data?.data?.length || 0
       });
     } catch (error) {
       console.error("❌ Failed to fetch core data", error);
@@ -52,8 +52,8 @@ export const useDashboardData = () => {
     // Initial fetch
     fetchCoreData();
     
-    // Set up auto-refresh every 60 seconds
-    const interval = setInterval(fetchCoreData, 60000);
+    // Set up auto-refresh every 30 seconds
+    const interval = setInterval(fetchCoreData, 30000);
     
     return () => clearInterval(interval);
   }, [fetchCoreData]);
@@ -88,8 +88,8 @@ export const useDashboardTables = () => {
       console.log("🔄 Fetching dashboard tables...");
       
       const [bestRes, worstRes, ordersRes, stockRes] = await Promise.all([
-        axios.get(`${config.api.baseUrl}/best-selling`),
-        axios.get(`${config.api.baseUrl}/worst-selling`),
+        axios.get(`${config.api.baseUrl}/products/best-selling`),
+        axios.get(`${config.api.baseUrl}/products/worst-selling`),
         axios.get(`${config.api.baseUrl}/orders/pending`),
         axios.get(`${config.api.baseUrl}/products/low-stock`),
       ]);

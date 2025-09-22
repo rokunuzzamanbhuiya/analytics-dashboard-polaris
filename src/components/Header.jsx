@@ -68,8 +68,8 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
     // Initial fetch
     fetchNotifications();
     
-    // Set up polling every 5 seconds
-    const interval = setInterval(fetchNotifications, 5000);
+    // Set up polling every 30 seconds
+    const interval = setInterval(fetchNotifications, 30000);
     
     // Cleanup interval on unmount
     return () => clearInterval(interval);

@@ -158,17 +158,17 @@ const Dashboard = () => {
     <IndexTable.Row id={item.id} key={item.id} position={index}>
       <IndexTable.Cell>
         <Link
-          url={`https://admin.shopify.com/orders/${item.id}`}
+          url={item.admin_url || `https://admin.shopify.com/orders/${item.id}`}
           target="_blank"
         >
-          {item.id}
+          {item.order_number || item.name}
         </Link>
       </IndexTable.Cell>
       <IndexTable.Cell>
-        <Text>{item.value}</Text>
+        <Text>{item.currency} {item.value || item.total_price}</Text>
       </IndexTable.Cell>
       <IndexTable.Cell>
-        <Text>{item.customer}</Text>
+        <Text>{item.customer?.name || item.customer}</Text>
       </IndexTable.Cell>
       <IndexTable.Cell>
         <Button size="slim" onClick={() => openModal(item)}>
@@ -340,12 +340,12 @@ const Dashboard = () => {
             primaryAction={{ content: "Close", onAction: closeModal }}
           >
             <Modal.Section>
-              <Text as="p">Customer: {activeOrder.customer}</Text>
-              <Text as="p">Value: {activeOrder.value}</Text>
+              <Text as="p">Customer: {activeOrder.customer?.name || activeOrder.customer}</Text>
+              <Text as="p">Value: {activeOrder.currency} {activeOrder.value || activeOrder.total_price}</Text>
               <Text as="p">Summary: {activeOrder.summary}</Text>
               <Box paddingBlockStart="400">
                 <Button
-                  url={`https://admin.shopify.com/orders/${activeOrder.id}`}
+                  url={activeOrder.admin_url || `https://admin.shopify.com/orders/${activeOrder.id}`}
                   target="_blank"
                 >
                   View in Shopify
