@@ -64,6 +64,11 @@ function App() {
     }
   }, [isDarkTheme]);
 
+  // Set document title
+  useEffect(() => {
+    document.title = "Shopify Analytics Dashboard";
+  }, []);
+
   return (
     <AppProvider i18n={{}}>
       <Router>

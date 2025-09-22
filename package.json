@@ -1,5 +1,6 @@
 {
   "name": "analytics-dashboard-front",
+  "description": "Shopify Analytics Dashboard - Track your store's performance, orders, products, and customer insights",
   "private": true,
   "version": "0.0.0",
   "type": "module",
