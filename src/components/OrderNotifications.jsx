@@ -169,7 +169,7 @@ const OrderNotifications = ({ notifications, setNotifications, onMarkAsRead, onA
             priority, 
             status, 
             financialStatus,
-            createdAt 
+            created_at 
           } = item;
           
           const getBadgeTone = (type) => {
@@ -213,7 +213,7 @@ const OrderNotifications = ({ notifications, setNotifications, onMarkAsRead, onA
                         • {financialStatus} / {status}
                       </Text>
                       <Text as="span" variant="bodySm" tone="subdued">
-                        • {new Date(createdAt).toLocaleString()}
+                        • {new Date(created_at).toLocaleString()}
                       </Text>
                     </InlineStack>
                   </InlineStack>
