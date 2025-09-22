@@ -8,6 +8,7 @@ import {
   Banner,
   BlockStack
 } from '@shopify/polaris';
+import config from '../config/shopify';
 
 const LoginForm = ({ isOpen, onClose, onLogin }) => {
   const [loading, setLoading] = useState(false);
@@ -19,7 +20,7 @@ const LoginForm = ({ isOpen, onClose, onLogin }) => {
 
     try {
       // Get OAuth URL from backend
-      const response = await fetch('/api/auth/shopify-login');
+      const response = await fetch(`${config.api.baseUrl}/auth/shopify-login`);
       
       if (!response.ok) {
         throw new Error('Failed to initiate Shopify login');
