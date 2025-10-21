@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider } from "@shopify/polaris";
 import "@shopify/polaris/build/esm/styles.css";
 import "./App.css";
@@ -7,6 +7,7 @@ import "./App.css";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import Home from "./components/Home";
+import LoginPage from "./components/LoginPage";
 import AuthCallback from "./components/AuthCallback";
 // import OrderNotifications from "./components/OrderNotifications";
 // import DashboardTables from "./components/DashboardTables";
@@ -14,6 +15,47 @@ import AuthCallback from "./components/AuthCallback";
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
   const [isDarkTheme, setIsDarkTheme] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check authentication status on app load
+  useEffect(() => {
+    const checkAuth = () => {
+      const userData = localStorage.getItem('shopify_user');
+      if (userData) {
+        try {
+          const parsedUser = JSON.parse(userData);
+          setIsAuthenticated(true);
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          localStorage.removeItem('shopify_user');
+          setIsAuthenticated(false);
+        }
+      } else {
+        setIsAuthenticated(false);
+      }
+    };
+    checkAuth();
+
+    // Listen for storage changes (logout from other tabs/components)
+    const handleStorageChange = (e) => {
+      if (e.key === 'shopify_user' && !e.newValue) {
+        setIsAuthenticated(false);
+      }
+    };
+    
+    // Listen for custom logout event
+    const handleLogout = () => {
+      setIsAuthenticated(false);
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('userLogout', handleLogout);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userLogout', handleLogout);
+    };
+  }, []);
 
   // Handle OAuth callback
   useEffect(() => {
@@ -55,6 +97,12 @@ function App() {
     setIsDarkTheme(!isDarkTheme);
   };
 
+  const handleLoginSuccess = (userData) => {
+    // Set authenticated state and navigate to dashboard
+    setIsAuthenticated(true);
+    window.location.href = '/';
+  };
+
   useEffect(() => {
     // Apply theme to body
     if (isDarkTheme) {
@@ -74,22 +122,33 @@ function App() {
       <Router>
         <Routes>
           <Route path="/auth/callback" element={<AuthCallback />} />
-          <Route path="/*" element={
-            <div className="grid-container">
-              <Header
-                OpenSidebar={OpenSidebar}
-                toggleTheme={toggleTheme}
-                isDarkTheme={isDarkTheme}
-              />
-              <Sidebar
-                openSidebarToggle={openSidebarToggle}
-                OpenSidebar={OpenSidebar}
-              />
-              <Home />
-              {/* <Dashboard /> */}
-              {/* <OrderNotifications /> */}
-              {/* <DashboardTables /> */}
-            </div>
+          <Route path="/login" element={
+            isAuthenticated ? (
+              <Navigate to="/" replace />
+            ) : (
+              <LoginPage onLoginSuccess={handleLoginSuccess} />
+            )
+          } />
+          <Route path="/" element={
+            isAuthenticated ? (
+              <div className="grid-container">
+                <Header
+                  OpenSidebar={OpenSidebar}
+                  toggleTheme={toggleTheme}
+                  isDarkTheme={isDarkTheme}
+                />
+                <Sidebar
+                  openSidebarToggle={openSidebarToggle}
+                  OpenSidebar={OpenSidebar}
+                />
+                <Home />
+                {/* <Dashboard /> */}
+                {/* <OrderNotifications /> */}
+                {/* <DashboardTables /> */}
+              </div>
+            ) : (
+              <Navigate to="/login" replace />
+            )
           } />
         </Routes>
       </Router>

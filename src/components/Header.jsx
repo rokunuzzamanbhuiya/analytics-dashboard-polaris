@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   BsFillBellFill,
   BsPersonCircle,
@@ -17,7 +18,6 @@ import {
   Text,
 } from "@shopify/polaris";
 import OrderNotifications from "./OrderNotifications";
-import LoginForm from "./LoginForm";
 import { 
   getNotifications, 
   markNotificationAsRead, 
@@ -26,6 +26,7 @@ import {
 import config from "../config/shopify";
 
 function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
+  const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
 
   // --- Notifications State ---
@@ -37,7 +38,6 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
   const [status, setStatus] = useState('idle');
   const [message, setMessage] = useState('');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [showLoginForm, setShowLoginForm] = useState(false);
 
   // Fetch notifications from API
   const fetchNotifications = async () => {
@@ -106,20 +106,9 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
     }
   };
 
-  // Handle login button click
+  // Handle login button click - navigate to login page
   const handleLoginClick = () => {
-    setShowLoginForm(true);
-  };
-
-  // Handle successful login
-  const handleLoginSuccess = (userData) => {
-    setUser(userData);
-    setIsAuthenticated(true);
-    setShowLoginForm(false);
-    console.log('User logged in:', userData);
-    
-    // Show success message
-    alert(`Login successful! Welcome ${userData.first_name} ${userData.last_name}! You have access to the dashboard.`);
+    navigate('/login');
   };
 
   // Check if user is authenticated on component mount
@@ -152,6 +141,9 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
     setUser(null);
     setIsAuthenticated(false);
     console.log('User logged out');
+    // Dispatch custom event to notify App component
+    window.dispatchEvent(new CustomEvent('userLogout'));
+    navigate('/login');
   };
 
   return (
@@ -328,13 +320,6 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
           />
         </Box>
       </Modal>
-
-      {/* Login Form Modal */}
-      <LoginForm
-        isOpen={showLoginForm}
-        onClose={() => setShowLoginForm(false)}
-        onLogin={handleLoginSuccess}
-      />
     </header>
   );
 }
