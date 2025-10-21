@@ -11,40 +11,36 @@ import {
 import config from '../config/shopify';
 
 const LoginForm = ({ isOpen, onClose, onLogin }) => {
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleShopifyLogin = async () => {
+  const handleSubmit = async () => {
     setLoading(true);
     setError('');
-
     try {
-      // Get OAuth URL from backend
-      const response = await fetch(`${config.api.baseUrl}/auth/shopify-login`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to initiate Shopify login');
+      const response = await fetch(`${config.api.baseUrl}/auth/email-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.hasAccess) {
+        setError(result.message || 'No access to any store.');
+        setLoading(false);
+        return;
       }
-
-      const data = await response.json();
-      
-      // Redirect to Shopify OAuth
-      window.location.href = data.authUrl;
-      
-    } catch (error) {
-      console.error('Shopify login error:', error);
-      setError(error.message);
+      onLogin(result.user || { email, hasAccess: true });
+    } catch (e) {
+      setError('Network error or server not responding.');
       setLoading(false);
     }
   };
 
-  const resetForm = () => {
+  const handleClose = () => {
     setError('');
     setLoading(false);
-  };
-
-  const handleClose = () => {
-    resetForm();
+    setEmail('');
     onClose();
   };
 
@@ -54,10 +50,10 @@ const LoginForm = ({ isOpen, onClose, onLogin }) => {
       onClose={handleClose}
       title="Login to Shopify Analytics"
       primaryAction={{
-        content: 'Login with Shopify',
-        onAction: handleShopifyLogin,
-        loading: loading,
-        disabled: loading
+        content: loading ? 'Loading...' : 'Login',
+        onAction: handleSubmit,
+        loading,
+        disabled: loading || !email
       }}
       secondaryActions={[
         {
@@ -70,26 +66,25 @@ const LoginForm = ({ isOpen, onClose, onLogin }) => {
       <Modal.Section>
         <Box padding="400">
           <BlockStack gap="400">
-            {/* Error Banner */}
             {error && (
               <Banner status="critical">
                 <p>{error}</p>
               </Banner>
             )}
-
-            {/* Shopify Login Info */}
             <Card sectioned>
               <BlockStack gap="200">
                 <Text variant="headingMd" as="h3">
-                  Login with Shopify
+                  Login with Email
                 </Text>
-                <Text variant="bodyMd" color="subdued">
-                  You'll be redirected to Shopify to authenticate with your store account.
-                  After login, you'll be redirected back to the dashboard.
-                </Text>
-                <Text variant="bodySm" color="subdued">
-                  Make sure you have admin access to the Shopify store.
-                </Text>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="Email Address"
+                  required
+                  style={{ padding: '8px', fontSize: '16px', width: '100%' }}
+                  disabled={loading}
+                />
               </BlockStack>
             </Card>
           </BlockStack>
