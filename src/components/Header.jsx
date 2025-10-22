@@ -164,7 +164,7 @@ function Header({ OpenSidebar, toggleTheme, isDarkTheme }) {
 
         {/* Notification with badge */}
         <div
-          className="relative icon cursor-pointer"
+          className="relative icon cursor-pointer notification-icon"
           onClick={() => setShowNotifications(true)}
           style={{ position: "relative" }}
         >

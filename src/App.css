@@ -104,6 +104,11 @@
   color: rgba(255, 255, 255, 0.95) !important;
 }
 
+/* notification-icon */
+.notification-icon {
+  cursor: pointer;
+}
+
 /* Theme toggle icon */
 .theme-toggle-icon {
   cursor: pointer;
@@ -216,7 +221,7 @@ body.light-theme #sidebar {
   background-color: #f6f6f7 !important;
 }
 
-body.light-theme .sidebar-list-item > a {
+body.light-theme .sidebar-list-item>a {
   color: #333333;
 }
 
@@ -340,7 +345,7 @@ body {
   margin-bottom: 30px;
 }
 
-.sidebar-title > span {
+.sidebar-title>span {
   display: none;
 }
 
@@ -367,7 +372,7 @@ body {
   cursor: pointer;
 }
 
-.sidebar-list-item > a {
+.sidebar-list-item>a {
   text-decoration: none;
   color: #9e9ea4;
 }
@@ -486,7 +491,7 @@ body.light-theme .main-title h3 {
     display: inline;
   }
 
-  .sidebar-title > span {
+  .sidebar-title>span {
     display: inline;
   }
 }
